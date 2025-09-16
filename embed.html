@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feed de Noticias - Embed</title>
+    <style>
+        /* Reset y estilos generales */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: transparent;
+        }
+
+        /* Contenedor del carrusel - SOLO EL FEED */
+        #carousel-container {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+            overflow: hidden;
+            position: relative;
+            height: 80px;
+            width: 100%;
+            margin: 0;
+        }
+
+        #carousel {
+            display: flex;
+            animation: scroll-continuo 200s linear infinite;
+            width: max-content;
+            align-items: center;
+            height: 100%;
+        }
+
+        /* Animación de scroll continuo */
+        @keyframes scroll-continuo {
+            0% {
+                transform: translateX(100%);
+            }
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+
+        /* Elementos de noticias */
+        .noticia-item {
+            min-width: auto;
+            height: 100%;
+            padding: 0 80px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 150px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .noticia-item:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+        }
+
+        .noticia-content {
+            color: white;
+            text-align: center;
+            font-size: 1.1em;
+            line-height: 1.2;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            white-space: nowrap;
+        }
+
+        .noticia-titulo {
+            font-weight: 700;
+        }
+
+        .noticia-separador {
+            margin: 0 25px;
+            font-weight: 400;
+            opacity: 0.8;
+            font-size: 1.2em;
+        }
+
+        .noticia-fuente {
+            font-weight: 400;
+            opacity: 0.9;
+            text-transform: capitalize;
+        }
+
+        /* Pausar animación al hover */
+        #carousel-container:hover #carousel {
+            animation-play-state: paused;
+        }
+
+        /* Mensaje cuando no hay noticias */
+        .no-noticias {
+            text-align: center;
+            color: rgba(255,255,255,0.8);
+            font-style: italic;
+            font-size: 1em;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        /* Responsive para embed */
+        @media (max-width: 768px) {
+            .noticia-item {
+                margin-right: 100px;
+                padding: 0 40px;
+            }
+            
+            .noticia-content {
+                font-size: 1em;
+            }
+            
+            .noticia-separador {
+                margin: 0 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .noticia-item {
+                margin-right: 80px;
+                padding: 0 30px;
+            }
+            
+            .noticia-content {
+                font-size: 0.9em;
+            }
+            
+            .noticia-separador {
+                margin: 0 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- SOLO EL CARRUSEL - SIN BOTONES NI ADMINISTRACIÓN -->
+    <div id="carousel-container">
+        <div id="carousel">
+            <!-- Las noticias aparecerán aquí -->
+        </div>
+    </div>
+
+    <script>
+        // Array para almacenar las noticias
+        let noticias = [];
+        let velocidadActual = 200; // Velocidad por defecto
+
+        // Función para extraer el dominio/fuente de una URL
+        function extraerFuente(url) {
+            try {
+                if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                    url = 'https://' + url;
+                }
+                
+                const urlObj = new URL(url);
+                const hostname = urlObj.hostname.toLowerCase();
+                
+                const fuentesConocidas = {
+                    'cnn.com': 'CNN',
+                    'bbc.com': 'BBC',
+                    'bbc.co.uk': 'BBC',
+                    'nytimes.com': 'New York Times',
+                    'washingtonpost.com': 'Washington Post',
+                    'reuters.com': 'Reuters',
+                    'bloomberg.com': 'Bloomberg',
+                    'forbes.com': 'Forbes',
+                    'techcrunch.com': 'TechCrunch',
+                    'theverge.com': 'The Verge',
+                    'wired.com': 'Wired',
+                    'elpais.com': 'El País',
+                    'elmundo.es': 'El Mundo',
+                    'abc.es': 'ABC España',
+                    'lavanguardia.com': 'La Vanguardia',
+                    'clarin.com': 'Clarín',
+                    'lanacion.com.ar': 'La Nación',
+                    'infobae.com': 'Infobae',
+                    'elespectador.com': 'El Espectador',
+                    'eltiempo.com': 'El Tiempo',
+                    'semana.com': 'Semana',
+                    'eldeber.com.bo': 'El Deber',
+                    'paginasiete.bo': 'Página Siete',
+                    'lostiempos.com': 'Los Tiempos',
+                    'opinion.com.bo': 'Opinión',
+                    'eldia.com.bo': 'El Día'
+                };
+
+                const cleanHostname = hostname.replace(/^www\./, '');
+                
+                if (fuentesConocidas[cleanHostname]) {
+                    return fuentesConocidas[cleanHostname];
+                }
+                
+                const parts = cleanHostname.split('.');
+                if (parts.length >= 2) {
+                    let mainPart = parts[parts.length - 2];
+                    return mainPart.charAt(0).toUpperCase() + mainPart.slice(1);
+                }
+                
+                return cleanHostname.charAt(0).toUpperCase() + cleanHostname.slice(1);
+                
+            } catch (error) {
+                console.error('Error extrayendo fuente:', error);
+                return 'Fuente Desconocida';
+            }
+        }
+
+        // Función para cargar noticias desde localStorage
+        function cargarNoticias() {
+            const noticiasGuardadas = localStorage.getItem('feedNoticias');
+            if (noticiasGuardadas) {
+                try {
+                    noticias = JSON.parse(noticiasGuardadas);
+                    console.log('Noticias cargadas para embed:', noticias.length);
+                } catch (error) {
+                    console.error('Error cargando noticias:', error);
+                    noticias = [];
+                }
+            }
+            
+            // Cargar velocidad guardada
+            const velocidadGuardada = localStorage.getItem('feedVelocidad');
+            if (velocidadGuardada) {
+                velocidadActual = parseInt(velocidadGuardada);
+            }
+        }
+
+        // Función para actualizar el carrusel
+        function actualizarCarrusel() {
+            const carousel = document.getElementById('carousel');
+            
+            if (noticias.length === 0) {
+                carousel.innerHTML = '<div class="no-noticias">No hay noticias configuradas.<br>Usa el panel de administración para agregar noticias.</div>';
+                return;
+            }
+
+            // Crear elementos solo con el carrusel
+            const noticiasHTML = noticias.map(noticia => `
+                <div class="noticia-item" onclick="abrirNoticia('${noticia.url}')">
+                    <div class="noticia-content">
+                        <span class="noticia-titulo">${noticia.titulo}</span><span class="noticia-separador">|</span><span class="noticia-fuente">${noticia.fuente}</span>
+                    </div>
+                </div>
+            `).join('');
+
+            // Duplicar contenido para scroll infinito
+            carousel.innerHTML = noticiasHTML + noticiasHTML;
+            
+            // Aplicar animación con velocidad actual
+            carousel.style.animation = `scroll-continuo ${velocidadActual}s linear infinite`;
+            
+            console.log('Carrusel embed actualizado con', noticias.length, 'noticias');
+        }
+
+        // Función para abrir noticia
+        function abrirNoticia(url) {
+            window.open(url, '_blank');
+        }
+
+        // Inicializar cuando la página carga
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Iniciando embed...');
+            cargarNoticias();
+            actualizarCarrusel();
+            
+            // Actualizar cada 30 segundos por si hay cambios
+            setInterval(() => {
+                cargarNoticias();
+                actualizarCarrusel();
+            }, 30000);
+        });
+    </script>
+</body>
+</html>
