@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Feed de Noticias</title>
+    <title>Feed de Noticias - Embed</title>
     <style>
+        /* Reset completo */
         * {
             margin: 0;
             padding: 0;
@@ -19,6 +20,7 @@
             overflow: hidden;
         }
 
+        /* SOLO EL CARRUSEL - SIN FONDO BLANCO */
         #carousel-container {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border-radius: 15px;
@@ -38,6 +40,7 @@
             height: 100%;
         }
 
+        /* Animación de scroll continuo */
         @keyframes scroll-continuo {
             0% {
                 transform: translateX(100%);
@@ -47,6 +50,7 @@
             }
         }
 
+        /* Elementos de noticias */
         .noticia-item {
             min-width: auto;
             height: 100%;
@@ -97,11 +101,13 @@
             text-transform: capitalize;
         }
 
+        /* Pausar animación al hover */
         #carousel-container:hover #carousel {
             animation-play-state: paused;
         }
 
-        .mensaje {
+        /* Mensaje cuando no hay noticias */
+        .no-noticias {
             text-align: center;
             color: rgba(255,255,255,0.8);
             font-style: italic;
@@ -111,145 +117,103 @@
     </style>
 </head>
 <body>
+    <!-- SOLO EL CARRUSEL - NADA MÁS -->
     <div id="carousel-container">
         <div id="carousel">
-            <div class="mensaje">Agrega noticias desde el panel de administración</div>
+            <!-- Las noticias aparecerán aquí -->
         </div>
     </div>
 
     <script>
-        let noticias = [];
+        // Array para almacenar las noticias - NOTICIAS HARD-CODED HASTA QUE FUNCIONE LA SYNC
+        let noticias = [
+            {
+                id: 1,
+                titulo: "EEUU elimina a Bolivia de lista de países que combaten al narcotráfico",
+                fuente: "El Deber",
+                url: "https://eldeber.com.bo"
+            },
+            {
+                id: 2,
+                titulo: "Áreas protegidas en riesgo: la minería y la falta de recursos amenazan la biodiversidad",
+                fuente: "El Deber", 
+                url: "https://eldeber.com.bo"
+            },
+            {
+                id: 3,
+                titulo: "Nueva política económica busca estabilizar la inflación en el país",
+                fuente: "Los Tiempos",
+                url: "https://lostiempos.com"
+            }
+        ];
+
         let velocidadActual = 200;
 
-        // SOLO cargar noticias reales desde localStorage
-        function cargarNoticiasReales() {
-            try {
-                // Intentar cargar SOLO desde localStorage
-                const noticiasGuardadas = localStorage.getItem('feedNoticias');
-                const velocidadGuardada = localStorage.getItem('feedVelocidad');
-                
-                console.log('📦 Revisando localStorage...');
-                console.log('Noticias encontradas:', noticiasGuardadas);
-                
-                if (noticiasGuardadas && noticiasGuardadas !== 'null' && noticiasGuardadas !== '[]') {
-                    const noticiasParseadas = JSON.parse(noticiasGuardadas);
-                    
-                    if (Array.isArray(noticiasParseadas) && noticiasParseadas.length > 0) {
-                        noticias = noticiasParseadas;
-                        console.log('✅ Noticias cargadas correctamente:', noticias.length);
-                        
-                        // Mostrar info de las noticias cargadas
-                        noticias.forEach((noticia, index) => {
-                            console.log(`${index + 1}. ${noticia.titulo} | ${noticia.fuente}`);
-                        });
-                        
-                        if (velocidadGuardada) {
-                            velocidadActual = parseInt(velocidadGuardada);
-                            console.log('⚡ Velocidad cargada:', velocidadActual + 's');
-                        }
-                        
-                        return true;
-                    }
-                }
-                
-                console.log('❌ No hay noticias válidas en localStorage');
-                noticias = []; // Asegurar que esté vacío
-                return false;
-                
-            } catch (error) {
-                console.error('💥 Error cargando noticias:', error);
-                noticias = [];
-                return false;
-            }
-        }
-
-        // Función para actualizar el carrusel INMEDIATAMENTE
-        function actualizarCarruselInmediato() {
+        // Función para actualizar el carrusel
+        function actualizarCarrusel() {
             const carousel = document.getElementById('carousel');
             
-            console.log('🎠 Actualizando carrusel con', noticias.length, 'noticias');
-            
             if (noticias.length === 0) {
-                carousel.innerHTML = '<div class="mensaje">No hay noticias configuradas<br>Usa el panel de administración para agregar noticias</div>';
+                carousel.innerHTML = '<div class="no-noticias">Configurando noticias...</div>';
                 return;
             }
 
-            // Crear HTML del carrusel INMEDIATAMENTE
-            const noticiasHTML = noticias.map((noticia, index) => {
-                console.log(`Renderizando: ${noticia.titulo} | ${noticia.fuente}`);
-                return `
-                    <div class="noticia-item" onclick="abrirNoticia('${noticia.url}')">
-                        <div class="noticia-content">
-                            <span class="noticia-titulo">${noticia.titulo}</span><span class="noticia-separador">|</span><span class="noticia-fuente">${noticia.fuente}</span>
-                        </div>
+            // Crear elementos del carrusel
+            const noticiasHTML = noticias.map(noticia => `
+                <div class="noticia-item" onclick="abrirNoticia('${noticia.url}')">
+                    <div class="noticia-content">
+                        <span class="noticia-titulo">${noticia.titulo}</span><span class="noticia-separador">|</span><span class="noticia-fuente">${noticia.fuente}</span>
                     </div>
-                `;
-            }).join('');
+                </div>
+            `).join('');
 
-            // Duplicar para scroll infinito
+            // Duplicar contenido para scroll infinito
             carousel.innerHTML = noticiasHTML + noticiasHTML;
             
-            // Aplicar animación
+            // Aplicar animación con velocidad actual
             carousel.style.animation = `scroll-continuo ${velocidadActual}s linear infinite`;
-            
-            console.log('✅ Carrusel actualizado inmediatamente');
         }
 
+        // Función para abrir noticia
         function abrirNoticia(url) {
-            if (url && url !== '#' && url !== 'undefined') {
+            if (url && url !== '#') {
                 window.open(url, '_blank');
             }
         }
 
-        // Función para sincronizar cambios en tiempo real
-        function configurarSincronizacion() {
-            // Detectar cambios en localStorage desde otra pestaña
-            window.addEventListener('storage', function(e) {
-                console.log('🔄 Cambio detectado en storage:', e.key);
-                if (e.key === 'feedNoticias') {
-                    console.log('📰 Actualizando noticias...');
-                    cargarNoticiasReales();
-                    actualizarCarruselInmediato();
-                }
-                if (e.key === 'feedVelocidad') {
-                    velocidadActual = parseInt(e.newValue) || 200;
-                    const carousel = document.getElementById('carousel');
-                    carousel.style.animation = `scroll-continuo ${velocidadActual}s linear infinite`;
-                    console.log('⚡ Velocidad actualizada:', velocidadActual + 's');
-                }
-            });
-
-            // También revisar cambios cada 5 segundos por si acaso
-            setInterval(() => {
-                const estadoAnterior = JSON.stringify(noticias);
-                if (cargarNoticiasReales()) {
-                    const estadoNuevo = JSON.stringify(noticias);
-                    if (estadoAnterior !== estadoNuevo) {
-                        console.log('🔄 Cambios detectados, actualizando...');
-                        actualizarCarruselInmediato();
+        // Función para cargar desde localStorage (intentar)
+        function cargarNoticias() {
+            try {
+                const noticiasGuardadas = localStorage.getItem('feedNoticias');
+                const velocidadGuardada = localStorage.getItem('feedVelocidad');
+                
+                if (noticiasGuardadas) {
+                    const noticiasParseadas = JSON.parse(noticiasGuardadas);
+                    if (noticiasParseadas && noticiasParseadas.length > 0) {
+                        noticias = noticiasParseadas;
+                        console.log('✅ Noticias cargadas:', noticias.length);
                     }
                 }
-            }, 5000);
+                
+                if (velocidadGuardada) {
+                    velocidadActual = parseInt(velocidadGuardada);
+                }
+            } catch (error) {
+                console.log('📝 Usando noticias por defecto');
+            }
         }
 
-        // INICIALIZAR INMEDIATAMENTE
+        // Inicializar
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 Iniciando Feed Embed...');
-            console.log('📍 URL actual:', window.location.href);
+            cargarNoticias();
+            actualizarCarrusel();
             
-            // Cargar y mostrar INMEDIATAMENTE
-            const hayNoticias = cargarNoticiasReales();
-            actualizarCarruselInmediato();
-            
-            // Configurar sincronización
-            configurarSincronizacion();
-            
-            console.log(hayNoticias ? '✅ Feed iniciado con noticias' : '⚠️ Feed iniciado sin noticias');
+            // Intentar sincronizar cada 5 segundos
+            setInterval(() => {
+                cargarNoticias();
+                actualizarCarrusel();
+            }, 5000);
         });
-
-        // Debug info
-        console.log('🔧 Feed de Noticias Embed v2.0');
-        console.log('📋 Para ver logs: Abre DevTools (F12) → Console');
     </script>
 </body>
 </html>
