@@ -57,12 +57,6 @@
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
-            transition: all 0.3s ease;
-        }
-
-        .noticia-item:hover {
-            background: rgba(255,255,255,0.2);
-            transform: translateY(-2px);
         }
 
         .noticia-content {
@@ -78,6 +72,13 @@
         .noticia-separador { margin: 0 20px; opacity: 0.8; }
         .noticia-fuente { font-weight: 400; opacity: 0.9; }
 
+        .mensaje {
+            text-align: center;
+            color: rgba(255,255,255,0.8);
+            font-style: italic;
+            padding: 20px;
+        }
+
         #carousel-container:hover #carousel {
             animation-play-state: paused;
         }
@@ -85,45 +86,45 @@
 </head>
 <body>
     <div id="carousel-container">
-        <div id="carousel"></div>
+        <div id="carousel">
+            <div class="mensaje">Agrega noticias desde el panel de administración para verlas aquí</div>
+        </div>
     </div>
 
     <script>
         function actualizarCarrusel() {
-            // NOTICIAS FIJAS QUE SIEMPRE FUNCIONAN
-            const noticias = [
-                {
-                    titulo: "Bolivia presenta nueva estrategia económica para combatir la inflación",
-                    fuente: "El Deber",
-                    url: "https://eldeber.com.bo"
-                },
-                {
-                    titulo: "Exportaciones mineras aumentan 15% en el último trimestre",
-                    fuente: "Los Tiempos",
-                    url: "https://lostiempos.com"
-                },
-                {
-                    titulo: "Nuevo acuerdo comercial con Brasil impulsa el sector agroindustrial",
-                    fuente: "Página Siete",
-                    url: "https://paginasiete.bo"
-                }
-            ];
-            
-            const carousel = document.getElementById('carousel');
-            
-            const html = noticias.map(n => `
-                <div class="noticia-item" onclick="window.open('${n.url}', '_blank')">
-                    <div class="noticia-content">
-                        <span class="noticia-titulo">${n.titulo}</span><span class="noticia-separador">|</span><span class="noticia-fuente">${n.fuente}</span>
-                    </div>
-                </div>
-            `).join('');
+            // SOLO INTENTAR CARGAR TUS NOTICIAS REALES
+            try {
+                const saved = localStorage.getItem('feedNoticias');
+                if (saved && saved !== 'null' && saved !== '[]') {
+                    const noticias = JSON.parse(saved);
+                    if (Array.isArray(noticias) && noticias.length > 0) {
+                        
+                        const carousel = document.getElementById('carousel');
+                        const html = noticias.map(n => `
+                            <div class="noticia-item" onclick="window.open('${n.url}', '_blank')">
+                                <div class="noticia-content">
+                                    <span class="noticia-titulo">${n.titulo}</span><span class="noticia-separador">|</span><span class="noticia-fuente">${n.fuente}</span>
+                                </div>
+                            </div>
+                        `).join('');
 
-            carousel.innerHTML = html + html;
+                        carousel.innerHTML = html + html;
+                        return;
+                    }
+                }
+            } catch (error) {
+                console.log('Error cargando noticias');
+            }
+            
+            // SI NO HAY NOTICIAS, MOSTRAR MENSAJE
+            document.getElementById('carousel').innerHTML = '<div class="mensaje">No hay noticias configuradas.<br>Usa el panel de administración para agregar noticias.</div>';
         }
 
         document.addEventListener('DOMContentLoaded', function() {
             actualizarCarrusel();
+            // Revisar cada 5 segundos por nuevas noticias
+            setInterval(actualizarCarrusel, 5000);
         });
     </script>
 </body>
