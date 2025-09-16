@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Feed de Noticias - Administración</title>
+    <title>Feed de Noticias</title>
     <style>
         /* Estilos generales */
         body {
@@ -268,16 +268,76 @@
             padding: 30px;
             font-size: 1.1em;
         }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .noticia-item {
+                margin-right: 120px;
+                padding: 18px 60px;
+            }
+            
+            .noticia-content {
+                font-size: 1em;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+            
+            .input-group {
+                flex-direction: column;
+            }
+            
+            #url-input {
+                min-width: unset;
+            }
+            
+            .noticia-item {
+                margin-right: 100px;
+                padding: 15px 40px;
+            }
+            
+            .noticia-content {
+                font-size: 0.95em;
+            }
+            
+            .noticia-separador {
+                margin: 0 20px;
+            }
+            
+            .speed-controls {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .noticia-item {
+                margin-right: 80px;
+                padding: 12px 30px;
+            }
+            
+            .noticia-content {
+                font-size: 0.85em;
+            }
+            
+            .noticia-separador {
+                margin: 0 15px;
+                font-size: 1em;
+            }
+        }
     </style>
 </head>
 <body>
-    <!-- Panel de administración (visible por defecto) -->
-    <div id="admin-panel">
+    <!-- Panel de administración (oculto inicialmente) -->
+    <div id="admin-panel" style="display: none;">
         <h3>📰 Administrar Noticias</h3>
         
         <div class="input-group">
             <input type="url" id="url-input" placeholder="Pega aquí el enlace de la noticia">
             <button onclick="agregarNoticia()">Agregar Noticia</button>
+            <button onclick="toggleAdmin()">Cerrar Panel</button>
         </div>
 
         <!-- Configuración de velocidad -->
@@ -296,6 +356,9 @@
         </div>
     </div>
 
+    <!-- Botón para mostrar panel admin -->
+    <button onclick="toggleAdmin()" id="admin-btn">⚙️ Administrar Noticias</button>
+
     <!-- Contenedor del carrusel -->
     <div id="carousel-container">
         <div id="carousel" class="carousel-scroll">
@@ -308,7 +371,18 @@
         let noticias = [];
         let velocidadActual = 200; // MUCHO MÁS LENTO por defecto
 
-        // Función para extraer el dominio/fuente de una URL
+        // Función para mostrar/ocultar panel de administración
+        function toggleAdmin() {
+            const panel = document.getElementById('admin-panel');
+            if (panel.style.display === 'none') {
+                panel.style.display = 'block';
+                actualizarListaAdmin();
+            } else {
+                panel.style.display = 'none';
+            }
+        }
+
+        // Función para extraer el dominio/fuente de una URL - CORREGIDA
         function extraerFuente(url) {
             try {
                 console.log('Extrayendo fuente de URL:', url);
@@ -613,7 +687,7 @@
             const carousel = document.getElementById('carousel');
             
             if (noticias.length === 0) {
-                carousel.innerHTML = '<div class="no-noticias">No hay noticias para mostrar.<br>Agrega algunas usando el formulario de arriba.</div>';
+                carousel.innerHTML = '<div class="no-noticias">No hay noticias para mostrar.<br>Agrega algunas usando el panel de administración.</div>';
                 return;
             }
 
@@ -706,7 +780,6 @@
             console.log('Iniciando aplicación...');
             cargarNoticias();
             actualizarCarrusel();
-            actualizarListaAdmin();
             
             document.querySelectorAll('.speed-btn').forEach(btn => {
                 if (parseInt(btn.dataset.speed) === velocidadActual) {
