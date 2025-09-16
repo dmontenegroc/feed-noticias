@@ -13,7 +13,7 @@
             background-color: #f8f9fa;
         }
 
-        /* Panel de administraciÃ³n */
+        /* Panel de administración */
         #admin-panel {
             background-color: white;
             padding: 25px;
@@ -127,7 +127,7 @@
             word-break: break-all;
         }
 
-        /* ConfiguraciÃ³n de velocidad en admin */
+        /* Configuración de velocidad en admin */
         .config-section {
             margin-top: 25px;
             padding-top: 20px;
@@ -188,7 +188,7 @@
             align-items: center;
         }
 
-        /* AnimaciÃ³n de scroll continuo */
+        /* Animación de scroll continuo */
         @keyframes scroll-continuo {
             0% {
                 transform: translateX(100%);
@@ -198,7 +198,7 @@
             }
         }
 
-        /* Elementos de noticias - ANCHO DINÃMICO PARA TÃTULOS COMPLETOS */
+        /* Elementos de noticias - ANCHO DINÁMICO PARA TÍTULOS COMPLETOS */
         .noticia-item {
             min-width: auto;
             max-width: none;
@@ -251,7 +251,7 @@
             text-transform: capitalize;
         }
 
-        /* PAUSAR ANIMACIÃ“N AL HOVER - MEJORADO */
+        /* PAUSAR ANIMACIÓN AL HOVER - MEJORADO */
         #carousel-container:hover #carousel {
             animation-play-state: paused;
         }
@@ -330,48 +330,48 @@
     </style>
 </head>
 <body>
-    <!-- Panel de administraciÃ³n (oculto inicialmente) -->
+    <!-- Panel de administración (oculto inicialmente) -->
     <div id="admin-panel" style="display: none;">
-        <h3>ðŸ“° Administrar Noticias</h3>
+        <h3>📰 Administrar Noticias</h3>
         
         <div class="input-group">
-            <input type="url" id="url-input" placeholder="Pega aquÃ­ el enlace de la noticia">
+            <input type="url" id="url-input" placeholder="Pega aquí el enlace de la noticia">
             <button onclick="agregarNoticia()">Agregar Noticia</button>
             <button onclick="toggleAdmin()">Cerrar Panel</button>
         </div>
 
-        <!-- ConfiguraciÃ³n de velocidad -->
+        <!-- Configuración de velocidad -->
         <div class="config-section">
-            <h4>âš™ï¸ ConfiguraciÃ³n de Velocidad</h4>
+            <h4>⚙️ Configuración de Velocidad</h4>
             <div class="speed-controls">
                 <button class="speed-btn active" onclick="cambiarVelocidad(200)" data-speed="200">Muy Lento</button>
                 <button class="speed-btn" onclick="cambiarVelocidad(140)" data-speed="140">Lento</button>
                 <button class="speed-btn" onclick="cambiarVelocidad(100)" data-speed="100">Normal</button>
-                <button class="speed-btn" onclick="cambiarVelocidad(60)" data-speed="60">RÃ¡pido</button>
+                <button class="speed-btn" onclick="cambiarVelocidad(60)" data-speed="60">Rápido</button>
             </div>
         </div>
 
         <div class="noticias-lista" id="noticias-lista">
-            <!-- Las noticias aparecerÃ¡n aquÃ­ -->
+            <!-- Las noticias aparecerán aquí -->
         </div>
     </div>
 
-    <!-- BotÃ³n para mostrar panel admin -->
-    <button onclick="toggleAdmin()" id="admin-btn">âš™ï¸ Administrar Noticias</button>
+    <!-- Botón para mostrar panel admin -->
+    <button onclick="toggleAdmin()" id="admin-btn">⚙️ Administrar Noticias</button>
 
     <!-- Contenedor del carrusel -->
     <div id="carousel-container">
         <div id="carousel" class="carousel-scroll">
-            <!-- Las noticias aparecerÃ¡n aquÃ­ -->
+            <!-- Las noticias aparecerán aquí -->
         </div>
     </div>
 
     <script>
         // Array para almacenar las noticias
         let noticias = [];
-        let velocidadActual = 200; // MUCHO MÃS LENTO por defecto
+        let velocidadActual = 200; // MUCHO MÁS LENTO por defecto
 
-        // FunciÃ³n para mostrar/ocultar panel de administraciÃ³n
+        // Función para mostrar/ocultar panel de administración
         function toggleAdmin() {
             const panel = document.getElementById('admin-panel');
             if (panel.style.display === 'none') {
@@ -382,7 +382,7 @@
             }
         }
 
-        // FunciÃ³n para extraer el dominio/fuente de una URL - CORREGIDA
+        // Función para extraer el dominio/fuente de una URL - CORREGIDA
         function extraerFuente(url) {
             try {
                 console.log('Extrayendo fuente de URL:', url);
@@ -394,9 +394,9 @@
                 
                 const urlObj = new URL(url);
                 const hostname = urlObj.hostname.toLowerCase();
-                console.log('Hostname extraÃ­do:', hostname);
+                console.log('Hostname extraído:', hostname);
                 
-                // Mapeo de dominios conocidos para nombres mÃ¡s amigables
+                // Mapeo de dominios conocidos para nombres más amigables
                 const fuentesConocidas = {
                     'cnn.com': 'CNN',
                     'bbc.com': 'BBC',
@@ -409,21 +409,21 @@
                     'techcrunch.com': 'TechCrunch',
                     'theverge.com': 'The Verge',
                     'wired.com': 'Wired',
-                    'elpais.com': 'El PaÃ­s',
+                    'elpais.com': 'El País',
                     'elmundo.es': 'El Mundo',
-                    'abc.es': 'ABC EspaÃ±a',
+                    'abc.es': 'ABC España',
                     'lavanguardia.com': 'La Vanguardia',
-                    'clarin.com': 'ClarÃ­n',
-                    'lanacion.com.ar': 'La NaciÃ³n',
+                    'clarin.com': 'Clarín',
+                    'lanacion.com.ar': 'La Nación',
                     'infobae.com': 'Infobae',
                     'elespectador.com': 'El Espectador',
                     'eltiempo.com': 'El Tiempo',
                     'semana.com': 'Semana',
                     'eldeber.com.bo': 'El Deber',
-                    'paginasiete.bo': 'PÃ¡gina Siete',
+                    'paginasiete.bo': 'Página Siete',
                     'lostiempos.com': 'Los Tiempos',
-                    'opinion.com.bo': 'OpiniÃ³n',
-                    'eldia.com.bo': 'El DÃ­a'
+                    'opinion.com.bo': 'Opinión',
+                    'eldia.com.bo': 'El Día'
                 };
 
                 // Remover 'www.' si existe
@@ -436,7 +436,7 @@
                     return fuentesConocidas[cleanHostname];
                 }
                 
-                // Si no estÃ¡ en el mapeo, extraer el nombre principal del dominio
+                // Si no está en el mapeo, extraer el nombre principal del dominio
                 const parts = cleanHostname.split('.');
                 console.log('Partes del dominio:', parts);
                 
@@ -446,7 +446,7 @@
                     
                     // Capitalizar primera letra
                     const fuente = mainPart.charAt(0).toUpperCase() + mainPart.slice(1);
-                    console.log('Fuente extraÃ­da:', fuente);
+                    console.log('Fuente extraída:', fuente);
                     return fuente;
                 }
                 
@@ -459,7 +459,7 @@
             }
         }
 
-        // FunciÃ³n para agregar nueva noticia
+        // Función para agregar nueva noticia
         async function agregarNoticia() {
             const urlInput = document.getElementById('url-input');
             let url = urlInput.value.trim();
@@ -469,7 +469,7 @@
                 return;
             }
 
-            // Verificar que no estÃ© duplicada
+            // Verificar que no esté duplicada
             if (noticias.some(noticia => noticia.url === url)) {
                 alert('Esta noticia ya existe en tu feed');
                 return;
@@ -486,12 +486,12 @@
             console.log('Fuente determinada:', fuente);
 
             try {
-                // Intentar extraer el tÃ­tulo de la pÃ¡gina
+                // Intentar extraer el título de la página
                 const titulo = await extraerTitulo(url);
                 
                 const nuevaNoticia = {
                     id: Date.now(),
-                    titulo: titulo || "TÃ­tulo no disponible",
+                    titulo: titulo || "Título no disponible",
                     fuente: fuente,
                     url: url,
                     fechaAgregada: new Date().toLocaleString()
@@ -505,45 +505,45 @@
                 actualizarCarrusel();
                 actualizarListaAdmin();
                 
-                mostrarNotificacion('âœ… Noticia agregada correctamente');
+                mostrarNotificacion('✅ Noticia agregada correctamente');
                 
             } catch (error) {
                 console.error('Error al agregar noticia:', error);
                 
                 const nuevaNoticia = {
                     id: Date.now(),
-                    titulo: "TÃ­tulo no disponible",
+                    titulo: "Título no disponible",
                     fuente: fuente,
                     url: url,
                     fechaAgregada: new Date().toLocaleString()
                 };
                 
-                console.log('Noticia con tÃ­tulo genÃ©rico:', nuevaNoticia);
+                console.log('Noticia con título genérico:', nuevaNoticia);
                 
                 noticias.push(nuevaNoticia);
                 guardarNoticias();
                 actualizarCarrusel();
                 actualizarListaAdmin();
                 
-                mostrarNotificacion('âš ï¸ Noticia agregada (tÃ­tulo no disponible)');
+                mostrarNotificacion('⚠️ Noticia agregada (título no disponible)');
             } finally {
                 button.textContent = originalText;
                 button.disabled = false;
             }
         }
 
-        // FunciÃ³n para eliminar noticia
+        // Función para eliminar noticia
         function eliminarNoticia(id) {
-            if (confirm('Â¿EstÃ¡s seguro de que quieres eliminar esta noticia?')) {
+            if (confirm('¿Estás seguro de que quieres eliminar esta noticia?')) {
                 noticias = noticias.filter(noticia => noticia.id !== id);
                 guardarNoticias();
                 actualizarCarrusel();
                 actualizarListaAdmin();
-                mostrarNotificacion('ðŸ—‘ï¸ Noticia eliminada');
+                mostrarNotificacion('🗑️ Noticia eliminada');
             }
         }
 
-        // FunciÃ³n para actualizar la lista en el panel de admin
+        // Función para actualizar la lista en el panel de admin
         function actualizarListaAdmin() {
             const lista = document.getElementById('noticias-lista');
             
@@ -559,15 +559,15 @@
                         <small>${noticia.url}</small><br>
                         <small style="color: #28a745;">Agregada: ${noticia.fechaAgregada}</small>
                     </div>
-                    <button class="delete-btn" onclick="eliminarNoticia(${noticia.id})">ðŸ—‘ï¸ Eliminar</button>
+                    <button class="delete-btn" onclick="eliminarNoticia(${noticia.id})">🗑️ Eliminar</button>
                 </div>
             `).join('');
         }
 
-        // FunciÃ³n para extraer tÃ­tulo - LIMPIEZA MEJORADA PARA EVITAR DUPLICACIÃ“N DE FUENTE
+        // Función para extraer título - LIMPIEZA MEJORADA PARA EVITAR DUPLICACIÓN DE FUENTE
         async function extraerTitulo(url) {
             try {
-                console.log('Intentando extraer tÃ­tulo de:', url);
+                console.log('Intentando extraer título de:', url);
                 
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), 8000);
@@ -594,40 +594,40 @@
                 
                 let titulo = null;
                 
-                // 1. Intentar obtener el tÃ­tulo de la etiqueta <title>
+                // 1. Intentar obtener el título de la etiqueta <title>
                 const titleElement = tempDiv.querySelector('title');
                 if (titleElement && titleElement.textContent.trim()) {
                     titulo = titleElement.textContent.trim();
-                    console.log('TÃ­tulo encontrado en <title>:', titulo);
+                    console.log('Título encontrado en <title>:', titulo);
                 }
                 
-                // 2. Si no hay tÃ­tulo, buscar en meta tags Open Graph
+                // 2. Si no hay título, buscar en meta tags Open Graph
                 if (!titulo) {
                     const ogTitle = tempDiv.querySelector('meta[property="og:title"]');
                     if (ogTitle && ogTitle.getAttribute('content')) {
                         titulo = ogTitle.getAttribute('content').trim();
-                        console.log('TÃ­tulo encontrado en og:title:', titulo);
+                        console.log('Título encontrado en og:title:', titulo);
                     }
                 }
                 
-                // 3. Si no hay tÃ­tulo, buscar en meta tags Twitter
+                // 3. Si no hay título, buscar en meta tags Twitter
                 if (!titulo) {
                     const twitterTitle = tempDiv.querySelector('meta[name="twitter:title"]');
                     if (twitterTitle && twitterTitle.getAttribute('content')) {
                         titulo = twitterTitle.getAttribute('content').trim();
-                        console.log('TÃ­tulo encontrado en twitter:title:', titulo);
+                        console.log('Título encontrado en twitter:title:', titulo);
                     }
                 }
                 
                 if (titulo) {
-                    // Limpiar el tÃ­tulo y REMOVER MENCIONES DE LA FUENTE AL FINAL
+                    // Limpiar el título y REMOVER MENCIONES DE LA FUENTE AL FINAL
                     titulo = titulo.replace(/\s+/g, ' ').trim();
                     
-                    // Remover patrones comunes de fuente al final del tÃ­tulo
+                    // Remover patrones comunes de fuente al final del título
                     const patronesFuente = [
                         /\s*\|\s*El Deber\s*$/i,
                         /\s*-\s*El Deber\s*$/i,
-                        /\s*â€¢\s*El Deber\s*$/i,
+                        /\s*•\s*El Deber\s*$/i,
                         /\s*\|\s*CNN\s*$/i,
                         /\s*-\s*CNN\s*$/i,
                         /\s*\|\s*BBC\s*$/i,
@@ -641,29 +641,29 @@
                         titulo = titulo.replace(patron, '');
                     }
                     
-                    // Limpiar espacios extra despuÃ©s de la limpieza
+                    // Limpiar espacios extra después de la limpieza
                     titulo = titulo.trim();
                     
-                    console.log('TÃ­tulo limpio final:', titulo);
+                    console.log('Título limpio final:', titulo);
                     return titulo;
                 } else {
-                    console.log('No se pudo extraer tÃ­tulo');
+                    console.log('No se pudo extraer título');
                     return null;
                 }
                 
             } catch (error) {
-                console.error('Error extrayendo tÃ­tulo:', error);
+                console.error('Error extrayendo título:', error);
                 return null;
             }
         }
 
-        // FunciÃ³n para guardar noticias en localStorage
+        // Función para guardar noticias en localStorage
         function guardarNoticias() {
             localStorage.setItem('feedNoticias', JSON.stringify(noticias));
             localStorage.setItem('feedVelocidad', velocidadActual.toString());
         }
 
-        // FunciÃ³n para cargar noticias desde localStorage
+        // Función para cargar noticias desde localStorage
         function cargarNoticias() {
             const noticiasGuardadas = localStorage.getItem('feedNoticias');
             if (noticiasGuardadas) {
@@ -682,16 +682,16 @@
             }
         }
 
-        // FunciÃ³n para actualizar el carrusel
+        // Función para actualizar el carrusel
         function actualizarCarrusel() {
             const carousel = document.getElementById('carousel');
             
             if (noticias.length === 0) {
-                carousel.innerHTML = '<div class="no-noticias">No hay noticias para mostrar.<br>Agrega algunas usando el panel de administraciÃ³n.</div>';
+                carousel.innerHTML = '<div class="no-noticias">No hay noticias para mostrar.<br>Agrega algunas usando el panel de administración.</div>';
                 return;
             }
 
-            // Crear elementos con formato: TÃ­tulo limpio | Fuente
+            // Crear elementos con formato: Título limpio | Fuente
             const noticiasHTML = noticias.map(noticia => {
                 console.log('Renderizando:', noticia.titulo, '|', noticia.fuente);
                 return `
@@ -706,18 +706,18 @@
             // Duplicar contenido para scroll infinito suave
             carousel.innerHTML = noticiasHTML + noticiasHTML;
             
-            // Aplicar animaciÃ³n con velocidad actual
+            // Aplicar animación con velocidad actual
             carousel.style.animation = `scroll-continuo ${velocidadActual}s linear infinite`;
             
             console.log('Carrusel actualizado con', noticias.length, 'noticias');
         }
 
-        // FunciÃ³n para abrir noticia
+        // Función para abrir noticia
         function abrirNoticia(url) {
             window.open(url, '_blank');
         }
 
-        // FunciÃ³n para cambiar velocidad de rotaciÃ³n
+        // Función para cambiar velocidad de rotación
         function cambiarVelocidad(segundos) {
             velocidadActual = segundos;
             
@@ -733,11 +733,11 @@
             
             const velocidadNombre = segundos >= 200 ? 'muy lenta' : 
                                    segundos >= 140 ? 'lenta' : 
-                                   segundos >= 100 ? 'normal' : 'rÃ¡pida';
-            mostrarNotificacion(`â±ï¸ Velocidad cambiada a ${velocidadNombre}`);
+                                   segundos >= 100 ? 'normal' : 'rápida';
+            mostrarNotificacion(`⏱️ Velocidad cambiada a ${velocidadNombre}`);
         }
 
-        // FunciÃ³n para mostrar notificaciones
+        // Función para mostrar notificaciones
         function mostrarNotificacion(mensaje) {
             const notif = document.createElement('div');
             notif.style.cssText = `
@@ -775,9 +775,9 @@
             }, 3000);
         }
 
-        // Inicializar cuando la pÃ¡gina carga
+        // Inicializar cuando la página carga
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('Iniciando aplicaciÃ³n...');
+            console.log('Iniciando aplicación...');
             cargarNoticias();
             actualizarCarrusel();
             
