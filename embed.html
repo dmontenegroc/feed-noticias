@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Feed de Noticias</title>
+    <title>Feed de Noticias - Embed</title>
     <style>
+        /* Reset completo */
         * {
             margin: 0;
             padding: 0;
@@ -19,6 +20,7 @@
             overflow: hidden;
         }
 
+        /* SOLO EL CARRUSEL - SIN FONDO BLANCO */
         #carousel-container {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border-radius: 15px;
@@ -38,6 +40,7 @@
             height: 100%;
         }
 
+        /* Animación de scroll continuo */
         @keyframes scroll-continuo {
             0% {
                 transform: translateX(100%);
@@ -47,6 +50,7 @@
             }
         }
 
+        /* Elementos de noticias */
         .noticia-item {
             min-width: auto;
             height: 100%;
@@ -97,11 +101,13 @@
             text-transform: capitalize;
         }
 
+        /* Pausar animación al hover */
         #carousel-container:hover #carousel {
             animation-play-state: paused;
         }
 
-        .loading {
+        /* Mensaje cuando no hay noticias */
+        .no-noticias {
             text-align: center;
             color: rgba(255,255,255,0.8);
             font-style: italic;
@@ -111,55 +117,48 @@
     </style>
 </head>
 <body>
+    <!-- SOLO EL CARRUSEL - NADA MÁS -->
     <div id="carousel-container">
         <div id="carousel">
-            <div class="loading">Cargando noticias...</div>
+            <!-- Las noticias aparecerán aquí -->
         </div>
     </div>
 
     <script>
-        let noticias = [];
-        let velocidadActual = 200;
-
-        // Función para cargar noticias desde el archivo JSON
-        async function cargarNoticiasDesdeJSON() {
-            try {
-                console.log('🔄 Cargando noticias desde JSON...');
-                
-                // Cargar el archivo JSON desde GitHub
-                const response = await fetch('./noticias.json?t=' + Date.now()); // Cache busting
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
-                const data = await response.json();
-                
-                if (data.noticias && data.noticias.length > 0) {
-                    noticias = data.noticias;
-                    velocidadActual = data.velocidad || 200;
-                    console.log('✅ Noticias cargadas:', noticias.length);
-                    return true;
-                } else {
-                    console.log('📝 No hay noticias en el JSON');
-                    return false;
-                }
-                
-            } catch (error) {
-                console.error('❌ Error cargando noticias:', error);
-                return false;
+        // Array para almacenar las noticias - NOTICIAS HARD-CODED HASTA QUE FUNCIONE LA SYNC
+        let noticias = [
+            {
+                id: 1,
+                titulo: "EEUU elimina a Bolivia de lista de países que combaten al narcotráfico",
+                fuente: "El Deber",
+                url: "https://eldeber.com.bo"
+            },
+            {
+                id: 2,
+                titulo: "Áreas protegidas en riesgo: la minería y la falta de recursos amenazan la biodiversidad",
+                fuente: "El Deber", 
+                url: "https://eldeber.com.bo"
+            },
+            {
+                id: 3,
+                titulo: "Nueva política económica busca estabilizar la inflación en el país",
+                fuente: "Los Tiempos",
+                url: "https://lostiempos.com"
             }
-        }
+        ];
+
+        let velocidadActual = 200;
 
         // Función para actualizar el carrusel
         function actualizarCarrusel() {
             const carousel = document.getElementById('carousel');
             
             if (noticias.length === 0) {
-                carousel.innerHTML = '<div class="loading">No hay noticias configuradas</div>';
+                carousel.innerHTML = '<div class="no-noticias">Configurando noticias...</div>';
                 return;
             }
 
+            // Crear elementos del carrusel
             const noticiasHTML = noticias.map(noticia => `
                 <div class="noticia-item" onclick="abrirNoticia('${noticia.url}')">
                     <div class="noticia-content">
@@ -168,30 +167,52 @@
                 </div>
             `).join('');
 
+            // Duplicar contenido para scroll infinito
             carousel.innerHTML = noticiasHTML + noticiasHTML;
-            carousel.style.animation = `scroll-continuo ${velocidadActual}s linear infinite`;
             
-            console.log('🎠 Carrusel actualizado');
+            // Aplicar animación con velocidad actual
+            carousel.style.animation = `scroll-continuo ${velocidadActual}s linear infinite`;
         }
 
+        // Función para abrir noticia
         function abrirNoticia(url) {
             if (url && url !== '#') {
                 window.open(url, '_blank');
             }
         }
 
+        // Función para cargar desde localStorage (intentar)
+        function cargarNoticias() {
+            try {
+                const noticiasGuardadas = localStorage.getItem('feedNoticias');
+                const velocidadGuardada = localStorage.getItem('feedVelocidad');
+                
+                if (noticiasGuardadas) {
+                    const noticiasParseadas = JSON.parse(noticiasGuardadas);
+                    if (noticiasParseadas && noticiasParseadas.length > 0) {
+                        noticias = noticiasParseadas;
+                        console.log('✅ Noticias cargadas:', noticias.length);
+                    }
+                }
+                
+                if (velocidadGuardada) {
+                    velocidadActual = parseInt(velocidadGuardada);
+                }
+            } catch (error) {
+                console.log('📝 Usando noticias por defecto');
+            }
+        }
+
         // Inicializar
-        document.addEventListener('DOMContentLoaded', async function() {
-            console.log('🚀 Iniciando feed embed...');
-            
-            const cargado = await cargarNoticiasDesdeJSON();
+        document.addEventListener('DOMContentLoaded', function() {
+            cargarNoticias();
             actualizarCarrusel();
             
-            // Recargar noticias cada 30 segundos
-            setInterval(async () => {
-                await cargarNoticiasDesdeJSON();
+            // Intentar sincronizar cada 5 segundos
+            setInterval(() => {
+                cargarNoticias();
                 actualizarCarrusel();
-            }, 30000);
+            }, 5000);
         });
     </script>
 </body>
