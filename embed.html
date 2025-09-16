@@ -35,11 +35,14 @@
             width: max-content;
             align-items: center;
             height: 100%;
+            /* ANIMACIÓN INFINITA SIN INTERRUPCIONES */
+            animation: scroll-infinito 200s linear infinite;
         }
 
-        @keyframes scroll-continuo {
-            0% { transform: translateX(100%); }
-            100% { transform: translateX(-100%); }
+        /* KEYFRAMES PARA SCROLL VERDADERAMENTE INFINITO */
+        @keyframes scroll-infinito {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
         }
 
         .noticia-item {
@@ -79,6 +82,7 @@
         .noticia-separador { margin: 0 25px; font-weight: 400; opacity: 0.8; font-size: 1.2em; }
         .noticia-fuente { font-weight: 400; opacity: 0.9; text-transform: capitalize; }
 
+        /* PAUSAR SOLO AL HOVER DEL CONTAINER, NO DE LOS ITEMS */
         #carousel-container:hover #carousel {
             animation-play-state: paused;
         }
@@ -89,6 +93,7 @@
             font-style: italic;
             font-size: 1em;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            padding: 20px;
         }
     </style>
 </head>
@@ -100,7 +105,7 @@
     </div>
 
     <script>
-        let noticias = []; // VACÍO - SIN NOTICIAS INVENTADAS
+        let noticias = [];
         let velocidadActual = 200;
 
         function cargarNoticiasReales() {
@@ -129,55 +134,9 @@
             }
         }
 
-        function actualizarCarrusel() {
+        function actualizarCarruselInfinito() {
             const carousel = document.getElementById('carousel');
             
             if (noticias.length === 0) {
                 carousel.innerHTML = '<div class="mensaje">No hay noticias configuradas<br>Ve a la página de administración para agregar algunas</div>';
-                return;
-            }
-
-            const html = noticias.map(n => `
-                <div class="noticia-item" onclick="window.open('${n.url}', '_blank')">
-                    <div class="noticia-content">
-                        <span class="noticia-titulo">${n.titulo}</span><span class="noticia-separador">|</span><span class="noticia-fuente">${n.fuente}</span>
-                    </div>
-                </div>
-            `).join('');
-
-            carousel.innerHTML = html + html;
-            
-            // USAR LA VELOCIDAD CORRECTA
-            carousel.style.animation = `scroll-continuo ${velocidadActual}s linear infinite`;
-        }
-
-        // Sincronización mejorada
-        function configurarSincronizacion() {
-            // Solo escuchar cambios de storage
-            window.addEventListener('storage', function(e) {
-                if (e.key === 'feedNoticias') {
-                    console.log('Cambio detectado');
-                    cargarNoticiasReales();
-                    actualizarCarrusel();
-                }
-                if (e.key === 'feedVelocidad') {
-                    velocidadActual = parseInt(e.newValue) || 200;
-                    document.getElementById('carousel').style.animation = `scroll-continuo ${velocidadActual}s linear infinite`;
-                }
-            });
-        }
-
-        // INICIALIZACIÓN INMEDIATA
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('Iniciando embed...');
-            
-            const hayNoticias = cargarNoticiasReales();
-            actualizarCarrusel(); // MOSTRAR INMEDIATAMENTE
-            
-            configurarSincronizacion();
-            
-            console.log(hayNoticias ? 'Feed con noticias' : 'Feed vacío - configura desde admin');
-        });
-    </script>
-</body>
-</html>
+                // Qu
