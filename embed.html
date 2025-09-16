@@ -3,189 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Feed de Noticias</title>
+    <title>Feed de Noticias - Embed</title>
     <style>
-        /* Estilos generales */
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        /* Reset completo */
+        * {
             margin: 0;
-            padding: 20px;
-            background-color: #f8f9fa;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        /* Panel de administración */
-        #admin-panel {
-            background-color: white;
-            padding: 25px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-            border: 1px solid #e9ecef;
-        }
-
-        #admin-panel h3 {
-            margin-top: 0;
-            color: #495057;
-            font-size: 1.3em;
-        }
-
-        .input-group {
-            display: flex;
-            margin-bottom: 15px;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        #url-input {
-            flex: 1;
-            min-width: 300px;
-            padding: 12px;
-            border: 2px solid #e9ecef;
-            border-radius: 8px;
-            font-size: 14px;
-            transition: border-color 0.3s ease;
-        }
-
-        #url-input:focus {
-            outline: none;
-            border-color: #007bff;
-        }
-
-        button {
-            padding: 12px 20px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 14px;
-            transition: all 0.3s ease;
-        }
-
-        button:hover {
-            background-color: #0056b3;
-            transform: translateY(-1px);
-        }
-
-        button:disabled {
-            background-color: #6c757d;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        button.delete-btn {
-            background-color: #dc3545;
-            padding: 8px 12px;
-            font-size: 12px;
-            margin-left: 10px;
-        }
-
-        button.delete-btn:hover {
-            background-color: #c82333;
-        }
-
-        /* Lista de noticias en admin */
-        .noticias-lista {
-            max-height: 300px;
-            overflow-y: auto;
-            margin-top: 20px;
-            border: 1px solid #e9ecef;
-            border-radius: 8px;
-        }
-
-        .noticia-admin-item {
-            padding: 15px;
-            border-bottom: 1px solid #e9ecef;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            background-color: #f8f9fa;
-        }
-
-        .noticia-admin-item:last-child {
-            border-bottom: none;
-        }
-
-        .noticia-admin-item:hover {
-            background-color: #e9ecef;
-        }
-
-        .noticia-info {
-            flex: 1;
-        }
-
-        .noticia-info h4 {
-            margin: 0 0 5px 0;
-            color: #495057;
-            font-size: 14px;
-        }
-
-        .noticia-info small {
-            color: #6c757d;
-            font-size: 12px;
-            word-break: break-all;
-        }
-
-        /* Configuración de velocidad en admin */
-        .config-section {
-            margin-top: 25px;
-            padding-top: 20px;
-            border-top: 1px solid #e9ecef;
-        }
-
-        .config-section h4 {
-            margin: 0 0 15px 0;
-            color: #495057;
-            font-size: 1.1em;
-        }
-
-        .speed-controls {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .speed-btn {
-            background-color: #f8f9fa;
-            color: #495057;
-            border: 2px solid #e9ecef;
+        html, body {
+            height: 100vh;
             margin: 0;
-            padding: 10px 16px;
-            font-size: 13px;
-            font-weight: 500;
+            padding: 0;
+            background: transparent !important;
+            overflow: hidden;
         }
 
-        .speed-btn.active {
-            background-color: #007bff;
-            color: white;
-            border-color: #007bff;
-        }
-
-        .speed-btn:hover {
-            background-color: #e9ecef;
-        }
-
-        .speed-btn.active:hover {
-            background-color: #0056b3;
-        }
-
-        /* Contenedor del carrusel */
+        /* SOLO EL CARRUSEL - SIN FONDO BLANCO */
         #carousel-container {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border-radius: 15px;
-            padding: 25px 20px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            padding: 20px;
             overflow: hidden;
             position: relative;
-            min-height: 80px;
+            height: 80px;
+            width: 100%;
+            margin: 0;
         }
 
         #carousel {
             display: flex;
-            animation: scroll-continuo 200s linear infinite;
+            animation: scroll-continuo 10s linear infinite;
             width: max-content;
             align-items: center;
+            height: 100%;
         }
 
         /* Animación de scroll continuo */
@@ -198,13 +50,11 @@
             }
         }
 
-        /* Elementos de noticias - ANCHO DINÁMICO PARA TÍTULOS COMPLETOS */
+        /* Elementos de noticias */
         .noticia-item {
             min-width: auto;
-            max-width: none;
-            height: auto;
-            padding: 20px 80px;
-            box-sizing: border-box;
+            height: 100%;
+            padding: 0 80px;
             cursor: pointer;
             transition: all 0.3s ease;
             margin-right: 150px;
@@ -220,8 +70,8 @@
 
         .noticia-item:hover {
             background: rgba(255,255,255,0.2);
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
         }
 
         .noticia-content {
@@ -230,7 +80,7 @@
             font-size: 1.1em;
             line-height: 1.2;
             text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-            display: block;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             white-space: nowrap;
         }
 
@@ -251,12 +101,8 @@
             text-transform: capitalize;
         }
 
-        /* PAUSAR ANIMACIÓN AL HOVER - MEJORADO */
+        /* Pausar animación al hover */
         #carousel-container:hover #carousel {
-            animation-play-state: paused;
-        }
-
-        .noticia-item:hover #carousel {
             animation-play-state: paused;
         }
 
@@ -265,527 +111,108 @@
             text-align: center;
             color: rgba(255,255,255,0.8);
             font-style: italic;
-            padding: 30px;
-            font-size: 1.1em;
-        }
-
-        /* Responsive */
-        @media (max-width: 1200px) {
-            .noticia-item {
-                margin-right: 120px;
-                padding: 18px 60px;
-            }
-            
-            .noticia-content {
-                font-size: 1em;
-            }
-        }
-
-        @media (max-width: 768px) {
-            body {
-                padding: 15px;
-            }
-            
-            .input-group {
-                flex-direction: column;
-            }
-            
-            #url-input {
-                min-width: unset;
-            }
-            
-            .noticia-item {
-                margin-right: 100px;
-                padding: 15px 40px;
-            }
-            
-            .noticia-content {
-                font-size: 0.95em;
-            }
-            
-            .noticia-separador {
-                margin: 0 20px;
-            }
-            
-            .speed-controls {
-                justify-content: center;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .noticia-item {
-                margin-right: 80px;
-                padding: 12px 30px;
-            }
-            
-            .noticia-content {
-                font-size: 0.85em;
-            }
-            
-            .noticia-separador {
-                margin: 0 15px;
-                font-size: 1em;
-            }
+            font-size: 1em;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
     </style>
 </head>
 <body>
-    <!-- Panel de administración (oculto inicialmente) -->
-    <div id="admin-panel" style="display: none;">
-        <h3>📰 Administrar Noticias</h3>
-        
-        <div class="input-group">
-            <input type="url" id="url-input" placeholder="Pega aquí el enlace de la noticia">
-            <button onclick="agregarNoticia()">Agregar Noticia</button>
-            <button onclick="toggleAdmin()">Cerrar Panel</button>
-        </div>
-
-        <!-- Configuración de velocidad -->
-        <div class="config-section">
-            <h4>⚙️ Configuración de Velocidad</h4>
-            <div class="speed-controls">
-                <button class="speed-btn active" onclick="cambiarVelocidad(200)" data-speed="200">Muy Lento</button>
-                <button class="speed-btn" onclick="cambiarVelocidad(140)" data-speed="140">Lento</button>
-                <button class="speed-btn" onclick="cambiarVelocidad(100)" data-speed="100">Normal</button>
-                <button class="speed-btn" onclick="cambiarVelocidad(60)" data-speed="60">Rápido</button>
-            </div>
-        </div>
-
-        <div class="noticias-lista" id="noticias-lista">
-            <!-- Las noticias aparecerán aquí -->
-        </div>
-    </div>
-
-    <!-- Botón para mostrar panel admin -->
-    <button onclick="toggleAdmin()" id="admin-btn">⚙️ Administrar Noticias</button>
-
-    <!-- Contenedor del carrusel -->
+    <!-- SOLO EL CARRUSEL - NADA MÁS -->
     <div id="carousel-container">
-        <div id="carousel" class="carousel-scroll">
+        <div id="carousel">
             <!-- Las noticias aparecerán aquí -->
         </div>
     </div>
 
     <script>
-        // Array para almacenar las noticias
-        let noticias = [];
-        let velocidadActual = 200; // MUCHO MÁS LENTO por defecto
-
-        // Función para mostrar/ocultar panel de administración
-        function toggleAdmin() {
-            const panel = document.getElementById('admin-panel');
-            if (panel.style.display === 'none') {
-                panel.style.display = 'block';
-                actualizarListaAdmin();
-            } else {
-                panel.style.display = 'none';
+        // Array para almacenar las noticias - NOTICIAS HARD-CODED HASTA QUE FUNCIONE LA SYNC
+        let noticias = [
+            {
+                id: 1,
+                titulo: "EEUU elimina a Bolivia de lista de países que combaten al narcotráfico",
+                fuente: "El Deber",
+                url: "https://eldeber.com.bo"
+            },
+            {
+                id: 2,
+                titulo: "Áreas protegidas en riesgo: la minería y la falta de recursos amenazan la biodiversidad",
+                fuente: "El Deber", 
+                url: "https://eldeber.com.bo"
+            },
+            {
+                id: 3,
+                titulo: "Nueva política económica busca estabilizar la inflación en el país",
+                fuente: "Los Tiempos",
+                url: "https://lostiempos.com"
             }
-        }
+        ];
 
-        // Función para extraer el dominio/fuente de una URL - CORREGIDA
-        function extraerFuente(url) {
-            try {
-                console.log('Extrayendo fuente de URL:', url);
-                
-                // Asegurarse de que la URL tenga protocolo
-                if (!url.startsWith('http://') && !url.startsWith('https://')) {
-                    url = 'https://' + url;
-                }
-                
-                const urlObj = new URL(url);
-                const hostname = urlObj.hostname.toLowerCase();
-                console.log('Hostname extraído:', hostname);
-                
-                // Mapeo de dominios conocidos para nombres más amigables
-                const fuentesConocidas = {
-                    'cnn.com': 'CNN',
-                    'bbc.com': 'BBC',
-                    'bbc.co.uk': 'BBC',
-                    'nytimes.com': 'New York Times',
-                    'washingtonpost.com': 'Washington Post',
-                    'reuters.com': 'Reuters',
-                    'bloomberg.com': 'Bloomberg',
-                    'forbes.com': 'Forbes',
-                    'techcrunch.com': 'TechCrunch',
-                    'theverge.com': 'The Verge',
-                    'wired.com': 'Wired',
-                    'elpais.com': 'El País',
-                    'elmundo.es': 'El Mundo',
-                    'abc.es': 'ABC España',
-                    'lavanguardia.com': 'La Vanguardia',
-                    'clarin.com': 'Clarín',
-                    'lanacion.com.ar': 'La Nación',
-                    'infobae.com': 'Infobae',
-                    'elespectador.com': 'El Espectador',
-                    'eltiempo.com': 'El Tiempo',
-                    'semana.com': 'Semana',
-                    'eldeber.com.bo': 'El Deber',
-                    'paginasiete.bo': 'Página Siete',
-                    'lostiempos.com': 'Los Tiempos',
-                    'opinion.com.bo': 'Opinión',
-                    'eldia.com.bo': 'El Día'
-                };
-
-                // Remover 'www.' si existe
-                const cleanHostname = hostname.replace(/^www\./, '');
-                console.log('Hostname limpio:', cleanHostname);
-                
-                // Buscar en el mapeo de fuentes conocidas
-                if (fuentesConocidas[cleanHostname]) {
-                    console.log('Fuente conocida encontrada:', fuentesConocidas[cleanHostname]);
-                    return fuentesConocidas[cleanHostname];
-                }
-                
-                // Si no está en el mapeo, extraer el nombre principal del dominio
-                const parts = cleanHostname.split('.');
-                console.log('Partes del dominio:', parts);
-                
-                if (parts.length >= 2) {
-                    // Tomar la parte principal del dominio (antes del TLD)
-                    let mainPart = parts[parts.length - 2];
-                    
-                    // Capitalizar primera letra
-                    const fuente = mainPart.charAt(0).toUpperCase() + mainPart.slice(1);
-                    console.log('Fuente extraída:', fuente);
-                    return fuente;
-                }
-                
-                console.log('Usando hostname completo como fallback');
-                return cleanHostname.charAt(0).toUpperCase() + cleanHostname.slice(1);
-                
-            } catch (error) {
-                console.error('Error extrayendo fuente:', error, 'URL:', url);
-                return 'Fuente Desconocida';
-            }
-        }
-
-        // Función para agregar nueva noticia
-        async function agregarNoticia() {
-            const urlInput = document.getElementById('url-input');
-            let url = urlInput.value.trim();
-            
-            if (url === '') {
-                alert('Por favor ingresa una URL');
-                return;
-            }
-
-            // Verificar que no esté duplicada
-            if (noticias.some(noticia => noticia.url === url)) {
-                alert('Esta noticia ya existe en tu feed');
-                return;
-            }
-
-            // Mostrar mensaje de carga
-            const button = event.target;
-            const originalText = button.textContent;
-            button.textContent = 'Procesando...';
-            button.disabled = true;
-
-            // Extraer fuente ANTES de procesar
-            const fuente = extraerFuente(url);
-            console.log('Fuente determinada:', fuente);
-
-            try {
-                // Intentar extraer el título de la página
-                const titulo = await extraerTitulo(url);
-                
-                const nuevaNoticia = {
-                    id: Date.now(),
-                    titulo: titulo || "Título no disponible",
-                    fuente: fuente,
-                    url: url,
-                    fechaAgregada: new Date().toLocaleString()
-                };
-
-                console.log('Nueva noticia creada:', nuevaNoticia);
-
-                noticias.push(nuevaNoticia);
-                urlInput.value = '';
-                guardarNoticias();
-                actualizarCarrusel();
-                actualizarListaAdmin();
-                
-                mostrarNotificacion('✅ Noticia agregada correctamente');
-                
-            } catch (error) {
-                console.error('Error al agregar noticia:', error);
-                
-                const nuevaNoticia = {
-                    id: Date.now(),
-                    titulo: "Título no disponible",
-                    fuente: fuente,
-                    url: url,
-                    fechaAgregada: new Date().toLocaleString()
-                };
-                
-                console.log('Noticia con título genérico:', nuevaNoticia);
-                
-                noticias.push(nuevaNoticia);
-                guardarNoticias();
-                actualizarCarrusel();
-                actualizarListaAdmin();
-                
-                mostrarNotificacion('⚠️ Noticia agregada (título no disponible)');
-            } finally {
-                button.textContent = originalText;
-                button.disabled = false;
-            }
-        }
-
-        // Función para eliminar noticia
-        function eliminarNoticia(id) {
-            if (confirm('¿Estás seguro de que quieres eliminar esta noticia?')) {
-                noticias = noticias.filter(noticia => noticia.id !== id);
-                guardarNoticias();
-                actualizarCarrusel();
-                actualizarListaAdmin();
-                mostrarNotificacion('🗑️ Noticia eliminada');
-            }
-        }
-
-        // Función para actualizar la lista en el panel de admin
-        function actualizarListaAdmin() {
-            const lista = document.getElementById('noticias-lista');
-            
-            if (noticias.length === 0) {
-                lista.innerHTML = '<div style="text-align: center; padding: 20px; color: #6c757d;">No hay noticias agregadas</div>';
-                return;
-            }
-
-            lista.innerHTML = noticias.map(noticia => `
-                <div class="noticia-admin-item">
-                    <div class="noticia-info">
-                        <h4><strong>${noticia.titulo}</strong> | ${noticia.fuente}</h4>
-                        <small>${noticia.url}</small><br>
-                        <small style="color: #28a745;">Agregada: ${noticia.fechaAgregada}</small>
-                    </div>
-                    <button class="delete-btn" onclick="eliminarNoticia(${noticia.id})">🗑️ Eliminar</button>
-                </div>
-            `).join('');
-        }
-
-        // Función para extraer título - LIMPIEZA MEJORADA PARA EVITAR DUPLICACIÓN DE FUENTE
-        async function extraerTitulo(url) {
-            try {
-                console.log('Intentando extraer título de:', url);
-                
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 8000);
-                
-                const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
-                const response = await fetch(proxyUrl, {
-                    signal: controller.signal
-                });
-                
-                clearTimeout(timeoutId);
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
-                const data = await response.json();
-                
-                if (!data.contents) {
-                    throw new Error('No content received');
-                }
-                
-                const tempDiv = document.createElement('div');
-                tempDiv.innerHTML = data.contents;
-                
-                let titulo = null;
-                
-                // 1. Intentar obtener el título de la etiqueta <title>
-                const titleElement = tempDiv.querySelector('title');
-                if (titleElement && titleElement.textContent.trim()) {
-                    titulo = titleElement.textContent.trim();
-                    console.log('Título encontrado en <title>:', titulo);
-                }
-                
-                // 2. Si no hay título, buscar en meta tags Open Graph
-                if (!titulo) {
-                    const ogTitle = tempDiv.querySelector('meta[property="og:title"]');
-                    if (ogTitle && ogTitle.getAttribute('content')) {
-                        titulo = ogTitle.getAttribute('content').trim();
-                        console.log('Título encontrado en og:title:', titulo);
-                    }
-                }
-                
-                // 3. Si no hay título, buscar en meta tags Twitter
-                if (!titulo) {
-                    const twitterTitle = tempDiv.querySelector('meta[name="twitter:title"]');
-                    if (twitterTitle && twitterTitle.getAttribute('content')) {
-                        titulo = twitterTitle.getAttribute('content').trim();
-                        console.log('Título encontrado en twitter:title:', titulo);
-                    }
-                }
-                
-                if (titulo) {
-                    // Limpiar el título y REMOVER MENCIONES DE LA FUENTE AL FINAL
-                    titulo = titulo.replace(/\s+/g, ' ').trim();
-                    
-                    // Remover patrones comunes de fuente al final del título
-                    const patronesFuente = [
-                        /\s*\|\s*El Deber\s*$/i,
-                        /\s*-\s*El Deber\s*$/i,
-                        /\s*•\s*El Deber\s*$/i,
-                        /\s*\|\s*CNN\s*$/i,
-                        /\s*-\s*CNN\s*$/i,
-                        /\s*\|\s*BBC\s*$/i,
-                        /\s*-\s*BBC\s*$/i,
-                        /\s*\|\s*[A-Za-z\s]+\.(com|net|org|bo|es|ar)\s*$/i,
-                        /\s*-\s*[A-Za-z\s]+\.(com|net|org|bo|es|ar)\s*$/i
-                    ];
-                    
-                    // Aplicar limpieza de patrones
-                    for (const patron of patronesFuente) {
-                        titulo = titulo.replace(patron, '');
-                    }
-                    
-                    // Limpiar espacios extra después de la limpieza
-                    titulo = titulo.trim();
-                    
-                    console.log('Título limpio final:', titulo);
-                    return titulo;
-                } else {
-                    console.log('No se pudo extraer título');
-                    return null;
-                }
-                
-            } catch (error) {
-                console.error('Error extrayendo título:', error);
-                return null;
-            }
-        }
-
-        // Función para guardar noticias en localStorage
-        function guardarNoticias() {
-            localStorage.setItem('feedNoticias', JSON.stringify(noticias));
-            localStorage.setItem('feedVelocidad', velocidadActual.toString());
-        }
-
-        // Función para cargar noticias desde localStorage
-        function cargarNoticias() {
-            const noticiasGuardadas = localStorage.getItem('feedNoticias');
-            if (noticiasGuardadas) {
-                try {
-                    noticias = JSON.parse(noticiasGuardadas);
-                    console.log('Noticias cargadas:', noticias.length);
-                } catch (error) {
-                    console.error('Error cargando noticias:', error);
-                    noticias = [];
-                }
-            }
-            
-            const velocidadGuardada = localStorage.getItem('feedVelocidad');
-            if (velocidadGuardada) {
-                velocidadActual = parseInt(velocidadGuardada);
-            }
-        }
+        let velocidadActual = 200;
 
         // Función para actualizar el carrusel
         function actualizarCarrusel() {
             const carousel = document.getElementById('carousel');
             
             if (noticias.length === 0) {
-                carousel.innerHTML = '<div class="no-noticias">No hay noticias para mostrar.<br>Agrega algunas usando el panel de administración.</div>';
+                carousel.innerHTML = '<div class="no-noticias">Configurando noticias...</div>';
                 return;
             }
 
-            // Crear elementos con formato: Título limpio | Fuente
-            const noticiasHTML = noticias.map(noticia => {
-                console.log('Renderizando:', noticia.titulo, '|', noticia.fuente);
-                return `
-                    <div class="noticia-item" onclick="abrirNoticia('${noticia.url}')">
-                        <div class="noticia-content">
-                            <span class="noticia-titulo">${noticia.titulo}</span><span class="noticia-separador">|</span><span class="noticia-fuente">${noticia.fuente}</span>
-                        </div>
+            // Crear elementos del carrusel
+            const noticiasHTML = noticias.map(noticia => `
+                <div class="noticia-item" onclick="abrirNoticia('${noticia.url}')">
+                    <div class="noticia-content">
+                        <span class="noticia-titulo">${noticia.titulo}</span><span class="noticia-separador">|</span><span class="noticia-fuente">${noticia.fuente}</span>
                     </div>
-                `;
-            }).join('');
+                </div>
+            `).join('');
 
-            // Duplicar contenido para scroll infinito suave
+            // Duplicar contenido para scroll infinito
             carousel.innerHTML = noticiasHTML + noticiasHTML;
             
             // Aplicar animación con velocidad actual
             carousel.style.animation = `scroll-continuo ${velocidadActual}s linear infinite`;
-            
-            console.log('Carrusel actualizado con', noticias.length, 'noticias');
         }
 
         // Función para abrir noticia
         function abrirNoticia(url) {
-            window.open(url, '_blank');
-        }
-
-        // Función para cambiar velocidad de rotación
-        function cambiarVelocidad(segundos) {
-            velocidadActual = segundos;
-            
-            document.querySelectorAll('.speed-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            event.target.classList.add('active');
-            
-            const carousel = document.getElementById('carousel');
-            carousel.style.animation = `scroll-continuo ${velocidadActual}s linear infinite`;
-            
-            guardarNoticias();
-            
-            const velocidadNombre = segundos >= 200 ? 'muy lenta' : 
-                                   segundos >= 140 ? 'lenta' : 
-                                   segundos >= 100 ? 'normal' : 'rápida';
-            mostrarNotificacion(`⏱️ Velocidad cambiada a ${velocidadNombre}`);
-        }
-
-        // Función para mostrar notificaciones
-        function mostrarNotificacion(mensaje) {
-            const notif = document.createElement('div');
-            notif.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background: #28a745;
-                color: white;
-                padding: 15px 20px;
-                border-radius: 8px;
-                z-index: 1000;
-                box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-                font-weight: 600;
-                animation: slideIn 0.3s ease;
-            `;
-            notif.textContent = mensaje;
-            
-            if (!document.getElementById('notif-styles')) {
-                const style = document.createElement('style');
-                style.id = 'notif-styles';
-                style.textContent = `
-                    @keyframes slideIn {
-                        from { transform: translateX(100%); opacity: 0; }
-                        to { transform: translateX(0); opacity: 1; }
-                    }
-                `;
-                document.head.appendChild(style);
+            if (url && url !== '#') {
+                window.open(url, '_blank');
             }
-            
-            document.body.appendChild(notif);
-            
-            setTimeout(() => {
-                notif.style.animation = 'slideIn 0.3s ease reverse';
-                setTimeout(() => notif.remove(), 300);
-            }, 3000);
         }
 
-        // Inicializar cuando la página carga
+        // Función para cargar desde localStorage (intentar)
+        function cargarNoticias() {
+            try {
+                const noticiasGuardadas = localStorage.getItem('feedNoticias');
+                const velocidadGuardada = localStorage.getItem('feedVelocidad');
+                
+                if (noticiasGuardadas) {
+                    const noticiasParseadas = JSON.parse(noticiasGuardadas);
+                    if (noticiasParseadas && noticiasParseadas.length > 0) {
+                        noticias = noticiasParseadas;
+                        console.log('✅ Noticias cargadas:', noticias.length);
+                    }
+                }
+                
+                if (velocidadGuardada) {
+                    velocidadActual = parseInt(velocidadGuardada);
+                }
+            } catch (error) {
+                console.log('📝 Usando noticias por defecto');
+            }
+        }
+
+        // Inicializar
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('Iniciando aplicación...');
             cargarNoticias();
             actualizarCarrusel();
             
-            document.querySelectorAll('.speed-btn').forEach(btn => {
-                if (parseInt(btn.dataset.speed) === velocidadActual) {
-                    btn.classList.add('active');
-                }
-            });
+            // Intentar sincronizar cada 5 segundos
+            setInterval(() => {
+                cargarNoticias();
+                actualizarCarrusel();
+            }, 5000);
         });
     </script>
 </body>
