@@ -786,6 +786,23 @@
                     btn.classList.add('active');
                 }
             });
+            // Detectar si estamos en modo embed
+const urlParams = new URLSearchParams(window.location.search);
+const esEmbed = urlParams.get('embed') === 'true';
+
+if (esEmbed) {
+    // Ocultar elementos de administración
+    document.getElementById('admin-panel').style.display = 'none';
+    document.getElementById('admin-btn').style.display = 'none';
+    document.body.style.background = 'transparent';
+    document.body.style.margin = '0';
+    document.body.style.padding = '0';
+    
+    // Ajustar carrusel para embed
+    const container = document.getElementById('carousel-container');
+    container.style.margin = '0';
+    container.style.width = '100%';
+}
         });
     </script>
 </body>
