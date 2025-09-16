@@ -116,6 +116,25 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
 
+        /* Indicador de admin */
+        .admin-link {
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            text-decoration: none;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+        }
+
+        .admin-link:hover {
+            opacity: 1;
+        }
+
         /* Responsive para embed */
         @media (max-width: 768px) {
             .noticia-item {
@@ -151,6 +170,7 @@
 <body>
     <!-- SOLO EL CARRUSEL - SIN BOTONES NI ADMINISTRACIÓN -->
     <div id="carousel-container">
+        <a href="./index.html" target="_blank" class="admin-link">⚙️ Admin</a>
         <div id="carousel">
             <!-- Las noticias aparecerán aquí -->
         </div>
@@ -161,77 +181,48 @@
         let noticias = [];
         let velocidadActual = 200; // Velocidad por defecto
 
-        // Función para extraer el dominio/fuente de una URL
-        function extraerFuente(url) {
-            try {
-                if (!url.startsWith('http://') && !url.startsWith('https://')) {
-                    url = 'https://' + url;
-                }
-                
-                const urlObj = new URL(url);
-                const hostname = urlObj.hostname.toLowerCase();
-                
-                const fuentesConocidas = {
-                    'cnn.com': 'CNN',
-                    'bbc.com': 'BBC',
-                    'bbc.co.uk': 'BBC',
-                    'nytimes.com': 'New York Times',
-                    'washingtonpost.com': 'Washington Post',
-                    'reuters.com': 'Reuters',
-                    'bloomberg.com': 'Bloomberg',
-                    'forbes.com': 'Forbes',
-                    'techcrunch.com': 'TechCrunch',
-                    'theverge.com': 'The Verge',
-                    'wired.com': 'Wired',
-                    'elpais.com': 'El País',
-                    'elmundo.es': 'El Mundo',
-                    'abc.es': 'ABC España',
-                    'lavanguardia.com': 'La Vanguardia',
-                    'clarin.com': 'Clarín',
-                    'lanacion.com.ar': 'La Nación',
-                    'infobae.com': 'Infobae',
-                    'elespectador.com': 'El Espectador',
-                    'eltiempo.com': 'El Tiempo',
-                    'semana.com': 'Semana',
-                    'eldeber.com.bo': 'El Deber',
-                    'paginasiete.bo': 'Página Siete',
-                    'lostiempos.com': 'Los Tiempos',
-                    'opinion.com.bo': 'Opinión',
-                    'eldia.com.bo': 'El Día'
-                };
-
-                const cleanHostname = hostname.replace(/^www\./, '');
-                
-                if (fuentesConocidas[cleanHostname]) {
-                    return fuentesConocidas[cleanHostname];
-                }
-                
-                const parts = cleanHostname.split('.');
-                if (parts.length >= 2) {
-                    let mainPart = parts[parts.length - 2];
-                    return mainPart.charAt(0).toUpperCase() + mainPart.slice(1);
-                }
-                
-                return cleanHostname.charAt(0).toUpperCase() + cleanHostname.slice(1);
-                
-            } catch (error) {
-                console.error('Error extrayendo fuente:', error);
-                return 'Fuente Desconocida';
+        // NOTICIAS DE PRUEBA HASTA QUE SE CONFIGUREN
+        const noticiasPrueba = [
+            {
+                id: 1,
+                titulo: "Bienvenido a tu Feed de Noticias",
+                fuente: "Sistema",
+                url: "#"
+            },
+            {
+                id: 2,
+                titulo: "Haz clic en 'Admin' arriba para configurar tus noticias",
+                fuente: "Guía",
+                url: "#"
+            },
+            {
+                id: 3,
+                titulo: "Una vez configuradas, aparecerán aquí automáticamente",
+                fuente: "Info",
+                url: "#"
             }
-        }
+        ];
 
-        // Función para cargar noticias desde localStorage
+        // Función para cargar noticias desde localStorage O usar prueba
         function cargarNoticias() {
-            const noticiasGuardadas = localStorage.getItem('feedNoticias');
-            if (noticiasGuardadas) {
-                try {
-                    noticias = JSON.parse(noticiasGuardadas);
-                    console.log('Noticias cargadas para embed:', noticias.length);
-                } catch (error) {
-                    console.error('Error cargando noticias:', error);
-                    noticias = [];
+            try {
+                // Intentar cargar desde la página principal
+                const noticiasGuardadas = localStorage.getItem('feedNoticias');
+                if (noticiasGuardadas) {
+                    const noticiasParseadas = JSON.parse(noticiasGuardadas);
+                    if (noticiasParseadas && noticiasParseadas.length > 0) {
+                        noticias = noticiasParseadas;
+                        console.log('Noticias cargadas desde localStorage:', noticias.length);
+                        return;
+                    }
                 }
+            } catch (error) {
+                console.error('Error cargando noticias:', error);
             }
+            
+            // Si no hay noticias guardadas, usar las de prueba
+            noticias = [...noticiasPrueba];
+            console.log('Usando noticias de prueba');
             
             // Cargar velocidad guardada
             const velocidadGuardada = localStorage.getItem('feedVelocidad');
@@ -269,7 +260,42 @@
 
         // Función para abrir noticia
         function abrirNoticia(url) {
-            window.open(url, '_blank');
+            if (url !== '#') {
+                window.open(url, '_blank');
+            }
+        }
+
+        // Función para sincronizar con la página principal
+        function sincronizarDatos() {
+            // Escuchar cambios en localStorage
+            window.addEventListener('storage', function(e) {
+                if (e.key === 'feedNoticias') {
+                    console.log('Detectado cambio en noticias, actualizando...');
+                    cargarNoticias();
+                    actualizarCarrusel();
+                }
+                if (e.key === 'feedVelocidad') {
+                    const nuevaVelocidad = parseInt(e.newValue);
+                    if (nuevaVelocidad) {
+                        velocidadActual = nuevaVelocidad;
+                        const carousel = document.getElementById('carousel');
+                        carousel.style.animation = `scroll-continuo ${velocidadActual}s linear infinite`;
+                    }
+                }
+            });
+            
+            // También revisar cambios cada 10 segundos
+            setInterval(() => {
+                const noticiasActuales = localStorage.getItem('feedNoticias');
+                if (noticiasActuales) {
+                    const noticiasParseadas = JSON.parse(noticiasActuales);
+                    if (JSON.stringify(noticiasParseadas) !== JSON.stringify(noticias)) {
+                        console.log('Cambios detectados, actualizando...');
+                        cargarNoticias();
+                        actualizarCarrusel();
+                    }
+                }
+            }, 10000);
         }
 
         // Inicializar cuando la página carga
@@ -277,13 +303,12 @@
             console.log('Iniciando embed...');
             cargarNoticias();
             actualizarCarrusel();
-            
-            // Actualizar cada 30 segundos por si hay cambios
-            setInterval(() => {
-                cargarNoticias();
-                actualizarCarrusel();
-            }, 30000);
+            sincronizarDatos();
         });
+
+        // Mensaje para el usuario
+        console.log('🚀 Feed de Noticias Embed cargado');
+        console.log('👉 Para configurar noticias, usa: ' + window.location.href.replace('embed.html', 'index.html'));
     </script>
 </body>
 </html>
