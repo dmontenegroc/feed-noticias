@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Feed de Noticias - Embed</title>
     <style>
-        /* Reset y estilos generales */
+        /* Reset completo */
         * {
             margin: 0;
             padding: 0;
@@ -13,19 +13,18 @@
         }
 
         html, body {
-            height: 100%;
+            height: 100vh;
             margin: 0;
             padding: 0;
+            background: transparent !important;
             overflow: hidden;
-            background: transparent;
         }
 
-        /* Contenedor del carrusel - SOLO EL FEED */
+        /* SOLO EL CARRUSEL - SIN FONDO BLANCO */
         #carousel-container {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border-radius: 15px;
             padding: 20px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.15);
             overflow: hidden;
             position: relative;
             height: 80px;
@@ -115,132 +114,51 @@
             font-size: 1em;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
-
-        /* Indicador de admin */
-        .admin-link {
-            position: absolute;
-            top: 5px;
-            right: 10px;
-            background: rgba(255,255,255,0.2);
-            color: white;
-            padding: 5px 10px;
-            border-radius: 15px;
-            font-size: 0.8em;
-            text-decoration: none;
-            opacity: 0.7;
-            transition: opacity 0.3s;
-        }
-
-        .admin-link:hover {
-            opacity: 1;
-        }
-
-        /* Responsive para embed */
-        @media (max-width: 768px) {
-            .noticia-item {
-                margin-right: 100px;
-                padding: 0 40px;
-            }
-            
-            .noticia-content {
-                font-size: 1em;
-            }
-            
-            .noticia-separador {
-                margin: 0 20px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .noticia-item {
-                margin-right: 80px;
-                padding: 0 30px;
-            }
-            
-            .noticia-content {
-                font-size: 0.9em;
-            }
-            
-            .noticia-separador {
-                margin: 0 15px;
-            }
-        }
     </style>
 </head>
 <body>
-    <!-- SOLO EL CARRUSEL - SIN BOTONES NI ADMINISTRACIÓN -->
+    <!-- SOLO EL CARRUSEL - NADA MÁS -->
     <div id="carousel-container">
-        <a href="./index.html" target="_blank" class="admin-link">⚙️ Admin</a>
         <div id="carousel">
             <!-- Las noticias aparecerán aquí -->
         </div>
     </div>
 
     <script>
-        // Array para almacenar las noticias
-        let noticias = [];
-        let velocidadActual = 200; // Velocidad por defecto
-
-        // NOTICIAS DE PRUEBA HASTA QUE SE CONFIGUREN
-        const noticiasPrueba = [
+        // Array para almacenar las noticias - NOTICIAS HARD-CODED HASTA QUE FUNCIONE LA SYNC
+        let noticias = [
             {
                 id: 1,
-                titulo: "Bienvenido a tu Feed de Noticias",
-                fuente: "Sistema",
-                url: "#"
+                titulo: "EEUU elimina a Bolivia de lista de países que combaten al narcotráfico",
+                fuente: "El Deber",
+                url: "https://eldeber.com.bo"
             },
             {
                 id: 2,
-                titulo: "Haz clic en 'Admin' arriba para configurar tus noticias",
-                fuente: "Guía",
-                url: "#"
+                titulo: "Áreas protegidas en riesgo: la minería y la falta de recursos amenazan la biodiversidad",
+                fuente: "El Deber", 
+                url: "https://eldeber.com.bo"
             },
             {
                 id: 3,
-                titulo: "Una vez configuradas, aparecerán aquí automáticamente",
-                fuente: "Info",
-                url: "#"
+                titulo: "Nueva política económica busca estabilizar la inflación en el país",
+                fuente: "Los Tiempos",
+                url: "https://lostiempos.com"
             }
         ];
 
-        // Función para cargar noticias desde localStorage O usar prueba
-        function cargarNoticias() {
-            try {
-                // Intentar cargar desde la página principal
-                const noticiasGuardadas = localStorage.getItem('feedNoticias');
-                if (noticiasGuardadas) {
-                    const noticiasParseadas = JSON.parse(noticiasGuardadas);
-                    if (noticiasParseadas && noticiasParseadas.length > 0) {
-                        noticias = noticiasParseadas;
-                        console.log('Noticias cargadas desde localStorage:', noticias.length);
-                        return;
-                    }
-                }
-            } catch (error) {
-                console.error('Error cargando noticias:', error);
-            }
-            
-            // Si no hay noticias guardadas, usar las de prueba
-            noticias = [...noticiasPrueba];
-            console.log('Usando noticias de prueba');
-            
-            // Cargar velocidad guardada
-            const velocidadGuardada = localStorage.getItem('feedVelocidad');
-            if (velocidadGuardada) {
-                velocidadActual = parseInt(velocidadGuardada);
-            }
-        }
+        let velocidadActual = 200;
 
         // Función para actualizar el carrusel
         function actualizarCarrusel() {
             const carousel = document.getElementById('carousel');
             
             if (noticias.length === 0) {
-                carousel.innerHTML = '<div class="no-noticias">No hay noticias configuradas.<br>Usa el panel de administración para agregar noticias.</div>';
+                carousel.innerHTML = '<div class="no-noticias">Configurando noticias...</div>';
                 return;
             }
 
-            // Crear elementos solo con el carrusel
+            // Crear elementos del carrusel
             const noticiasHTML = noticias.map(noticia => `
                 <div class="noticia-item" onclick="abrirNoticia('${noticia.url}')">
                     <div class="noticia-content">
@@ -254,61 +172,48 @@
             
             // Aplicar animación con velocidad actual
             carousel.style.animation = `scroll-continuo ${velocidadActual}s linear infinite`;
-            
-            console.log('Carrusel embed actualizado con', noticias.length, 'noticias');
         }
 
         // Función para abrir noticia
         function abrirNoticia(url) {
-            if (url !== '#') {
+            if (url && url !== '#') {
                 window.open(url, '_blank');
             }
         }
 
-        // Función para sincronizar con la página principal
-        function sincronizarDatos() {
-            // Escuchar cambios en localStorage
-            window.addEventListener('storage', function(e) {
-                if (e.key === 'feedNoticias') {
-                    console.log('Detectado cambio en noticias, actualizando...');
-                    cargarNoticias();
-                    actualizarCarrusel();
-                }
-                if (e.key === 'feedVelocidad') {
-                    const nuevaVelocidad = parseInt(e.newValue);
-                    if (nuevaVelocidad) {
-                        velocidadActual = nuevaVelocidad;
-                        const carousel = document.getElementById('carousel');
-                        carousel.style.animation = `scroll-continuo ${velocidadActual}s linear infinite`;
+        // Función para cargar desde localStorage (intentar)
+        function cargarNoticias() {
+            try {
+                const noticiasGuardadas = localStorage.getItem('feedNoticias');
+                const velocidadGuardada = localStorage.getItem('feedVelocidad');
+                
+                if (noticiasGuardadas) {
+                    const noticiasParseadas = JSON.parse(noticiasGuardadas);
+                    if (noticiasParseadas && noticiasParseadas.length > 0) {
+                        noticias = noticiasParseadas;
+                        console.log('✅ Noticias cargadas:', noticias.length);
                     }
                 }
-            });
-            
-            // También revisar cambios cada 10 segundos
-            setInterval(() => {
-                const noticiasActuales = localStorage.getItem('feedNoticias');
-                if (noticiasActuales) {
-                    const noticiasParseadas = JSON.parse(noticiasActuales);
-                    if (JSON.stringify(noticiasParseadas) !== JSON.stringify(noticias)) {
-                        console.log('Cambios detectados, actualizando...');
-                        cargarNoticias();
-                        actualizarCarrusel();
-                    }
+                
+                if (velocidadGuardada) {
+                    velocidadActual = parseInt(velocidadGuardada);
                 }
-            }, 10000);
+            } catch (error) {
+                console.log('📝 Usando noticias por defecto');
+            }
         }
 
-        // Inicializar cuando la página carga
+        // Inicializar
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('Iniciando embed...');
             cargarNoticias();
             actualizarCarrusel();
-            sincronizarDatos();
+            
+            // Intentar sincronizar cada 5 segundos
+            setInterval(() => {
+                cargarNoticias();
+                actualizarCarrusel();
+            }, 5000);
         });
-
-        // Mensaje para el usuario
-        console.log('🚀 Feed de Noticias Embed cargado');
-        console.log('👉 Para configurar noticias, usa: ' + window.location.href.replace('embed.html', 'index.html'));
     </script>
 </body>
 </html>
