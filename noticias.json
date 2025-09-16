@@ -1,0 +1,19 @@
+{
+  "noticias": [
+    {
+      "id": 1,
+      "titulo": "EEUU elimina a Bolivia de lista de países que combaten al narcotráfico",
+      "fuente": "El Deber",
+      "url": "https://eldeber.com.bo",
+      "fechaAgregada": "2024-01-15"
+    },
+    {
+      "id": 2,
+      "titulo": "Áreas protegidas en riesgo: la minería y la falta de recursos amenazan la biodiversidad",
+      "fuente": "El Deber",
+      "url": "https://eldeber.com.bo",
+      "fechaAgregada": "2024-01-14"
+    }
+  ],
+  "velocidad": 200
+}
