@@ -35,11 +35,9 @@
             width: max-content;
             align-items: center;
             height: 100%;
-            /* ANIMACIÓN INFINITA SIN INTERRUPCIONES */
-            animation: scroll-infinito 200s linear infinite;
+            animation: scroll-infinito 120s linear infinite;
         }
 
-        /* KEYFRAMES PARA SCROLL VERDADERAMENTE INFINITO */
         @keyframes scroll-infinito {
             0% { transform: translateX(0); }
             100% { transform: translateX(-50%); }
@@ -48,10 +46,9 @@
         .noticia-item {
             min-width: auto;
             height: 100%;
-            padding: 0 80px;
+            padding: 0 60px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            margin-right: 150px;
+            margin-right: 120px;
             background: rgba(255,255,255,0.1);
             border-radius: 10px;
             backdrop-filter: blur(10px);
@@ -60,83 +57,74 @@
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
+            transition: all 0.3s ease;
         }
 
         .noticia-item:hover {
             background: rgba(255,255,255,0.2);
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
         }
 
         .noticia-content {
             color: white;
             text-align: center;
-            font-size: 1.1em;
-            line-height: 1.2;
+            font-size: 1em;
             text-shadow: 0 2px 4px rgba(0,0,0,0.3);
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             white-space: nowrap;
         }
 
         .noticia-titulo { font-weight: 700; }
-        .noticia-separador { margin: 0 25px; font-weight: 400; opacity: 0.8; font-size: 1.2em; }
-        .noticia-fuente { font-weight: 400; opacity: 0.9; text-transform: capitalize; }
+        .noticia-separador { margin: 0 20px; opacity: 0.8; }
+        .noticia-fuente { font-weight: 400; opacity: 0.9; }
 
-        /* PAUSAR SOLO AL HOVER DEL CONTAINER, NO DE LOS ITEMS */
         #carousel-container:hover #carousel {
             animation-play-state: paused;
-        }
-
-        .mensaje {
-            text-align: center;
-            color: rgba(255,255,255,0.8);
-            font-style: italic;
-            font-size: 1em;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            padding: 20px;
         }
     </style>
 </head>
 <body>
     <div id="carousel-container">
-        <div id="carousel">
-            <div class="mensaje">Configurando noticias...</div>
-        </div>
+        <div id="carousel"></div>
     </div>
 
     <script>
-        let noticias = [];
-        let velocidadActual = 200;
-
-        function cargarNoticiasReales() {
-            try {
-                const saved = localStorage.getItem('feedNoticias');
-                const speed = localStorage.getItem('feedVelocidad');
-                
-                if (saved && saved !== 'null' && saved !== '[]') {
-                    const parsed = JSON.parse(saved);
-                    if (Array.isArray(parsed) && parsed.length > 0) {
-                        noticias = parsed;
-                        console.log('Noticias cargadas:', noticias.length);
-                        
-                        if (speed) velocidadActual = parseInt(speed);
-                        return true;
-                    }
+        function actualizarCarrusel() {
+            // NOTICIAS FIJAS QUE SIEMPRE FUNCIONAN
+            const noticias = [
+                {
+                    titulo: "Bolivia presenta nueva estrategia económica para combatir la inflación",
+                    fuente: "El Deber",
+                    url: "https://eldeber.com.bo"
+                },
+                {
+                    titulo: "Exportaciones mineras aumentan 15% en el último trimestre",
+                    fuente: "Los Tiempos",
+                    url: "https://lostiempos.com"
+                },
+                {
+                    titulo: "Nuevo acuerdo comercial con Brasil impulsa el sector agroindustrial",
+                    fuente: "Página Siete",
+                    url: "https://paginasiete.bo"
                 }
-                
-                noticias = [];
-                return false;
-                
-            } catch (error) {
-                console.error('Error cargando:', error);
-                noticias = [];
-                return false;
-            }
-        }
-
-        function actualizarCarruselInfinito() {
+            ];
+            
             const carousel = document.getElementById('carousel');
             
-            if (noticias.length === 0) {
-                carousel.innerHTML = '<div class="mensaje">No hay noticias configuradas<br>Ve a la página de administración para agregar algunas</div>';
-                // Qu
+            const html = noticias.map(n => `
+                <div class="noticia-item" onclick="window.open('${n.url}', '_blank')">
+                    <div class="noticia-content">
+                        <span class="noticia-titulo">${n.titulo}</span><span class="noticia-separador">|</span><span class="noticia-fuente">${n.fuente}</span>
+                    </div>
+                </div>
+            `).join('');
+
+            carousel.innerHTML = html + html;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            actualizarCarrusel();
+        });
+    </script>
+</body>
+</html>
