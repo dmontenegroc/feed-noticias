@@ -803,6 +803,41 @@ if (esEmbed) {
     container.style.margin = '0';
     container.style.width = '100%';
 }
+// Comunicar con embed cuando hay cambios
+function sincronizarConEmbed() {
+    // Enviar datos a ventanas hijas (iframes)
+    window.postMessage({
+        type: 'noticias',
+        noticias: noticias,
+        velocidad: velocidadActual
+    }, '*');
+    
+    // También guardar en sessionStorage como backup
+    try {
+        sessionStorage.setItem('feedNoticias', JSON.stringify(noticias));
+        sessionStorage.setItem('feedVelocidad', velocidadActual.toString());
+    } catch (e) {
+        console.log('sessionStorage no disponible');
+    }
+}
+
+// Modificar guardarNoticias para sincronizar
+const originalGuardarNoticias = guardarNoticias;
+guardarNoticias = function() {
+    originalGuardarNoticias();
+    sincronizarConEmbed();
+};
+
+// Sincronizar cada vez que se actualiza el carrusel
+const originalActualizarCarrusel = actualizarCarrusel;
+actualizarCarrusel = function() {
+    originalActualizarCarrusel();
+    sincronizarConEmbed();
+};
+
+// Sincronizar al cargar
+sincronizarConEmbed();
+            
         });
     </script>
 </body>
