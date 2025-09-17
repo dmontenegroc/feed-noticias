@@ -677,23 +677,26 @@
         }
 
         // Función para cargar noticias desde localStorage
+
         function cargarNoticias() {
-            const noticiasGuardadas = localStorage.getItem('feedNoticias');
-            if (noticiasGuardadas) {
-                try {
-                    noticias = JSON.parse(noticiasGuardadas);
-                    console.log('Noticias cargadas:', noticias.length);
-                } catch (error) {
-                    console.error('Error cargando noticias:', error);
-                    noticias = [];
-                }
-            }
-            
-            const velocidadGuardada = localStorage.getItem('feedVelocidad');
-            if (velocidadGuardada) {
-                velocidadActual = parseInt(velocidadGuardada);
-            }
+    const noticiasGuardadas = localStorage.getItem('feedNoticias') || sessionStorage.getItem('feedNoticias');
+    if (noticiasGuardadas) {
+        try {
+            noticias = JSON.parse(noticiasGuardadas);
+            console.log('Noticias cargadas:', noticias.length);
+        } catch (error) {
+            console.error('Error cargando noticias:', error);
+            noticias = [];
         }
+    }
+    
+    const velocidadGuardada = localStorage.getItem('feedVelocidad') || sessionStorage.getItem('feedVelocidad');
+    if (velocidadGuardada) {
+        velocidadActual = parseInt(velocidadGuardada);
+    }
+}
+
+        
 
         // Función para actualizar el carrusel - MODIFICADA PARA EMBED
         function actualizarCarrusel() {
