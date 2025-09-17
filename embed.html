@@ -188,7 +188,13 @@
                 return false;
             }
         }
-
+if (esEmbed) {
+   // Prueba estática: 2 noticias de ejemplo
+   noticias = [
+     {titulo:"Ejemplo 1",fuente:"Demo",url:"#",id:1},
+     {titulo:"Ejemplo 2",fuente:"Demo",url:"#",id:2}
+   ];
+}
         function actualizarCarruselInmediato() {
             const carousel = document.getElementById('carousel');
             
