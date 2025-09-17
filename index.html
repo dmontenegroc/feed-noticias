@@ -327,6 +327,14 @@
                 font-size: 1em;
             }
         }
+
+        /* MODO EMBED */
+        .embed-mode {
+            background: transparent !important;
+            padding: 0 !important;
+            overflow: hidden;
+            height: 100vh;
+        }
     </style>
 </head>
 <body>
@@ -370,6 +378,10 @@
         // Array para almacenar las noticias
         let noticias = [];
         let velocidadActual = 200; // MUCHO MÁS LENTO por defecto
+
+        // DETECTAR SI ESTAMOS EN MODO EMBED - AL PRINCIPIO
+        const urlParams = new URLSearchParams(window.location.search);
+        const esEmbed = urlParams.get('embed') === 'true';
 
         // Función para mostrar/ocultar panel de administración
         function toggleAdmin() {
@@ -661,6 +673,7 @@
         function guardarNoticias() {
             localStorage.setItem('feedNoticias', JSON.stringify(noticias));
             localStorage.setItem('feedVelocidad', velocidadActual.toString());
+            sincronizarConEmbed();
         }
 
         // Función para cargar noticias desde localStorage
@@ -682,12 +695,16 @@
             }
         }
 
-        // Función para actualizar el carrusel
+        // Función para actualizar el carrusel - MODIFICADA PARA EMBED
         function actualizarCarrusel() {
             const carousel = document.getElementById('carousel');
             
             if (noticias.length === 0) {
-                carousel.innerHTML = '<div class="no-noticias">No hay noticias para mostrar.<br>Agrega algunas usando el panel de administración.</div>';
+                if (esEmbed) {
+                    carousel.innerHTML = '<div class="no-noticias">Cargando noticias...</div>';
+                } else {
+                    carousel.innerHTML = '<div class="no-noticias">No hay noticias para mostrar.<br>Agrega algunas usando el panel de administración.</div>';
+                }
                 return;
             }
 
@@ -710,6 +727,7 @@
             carousel.style.animation = `scroll-continuo ${velocidadActual}s linear infinite`;
             
             console.log('Carrusel actualizado con', noticias.length, 'noticias');
+            sincronizarConEmbed();
         }
 
         // Función para abrir noticia
@@ -739,6 +757,8 @@
 
         // Función para mostrar notificaciones
         function mostrarNotificacion(mensaje) {
+            if (esEmbed) return; // No mostrar notificaciones en modo embed
+            
             const notif = document.createElement('div');
             notif.style.cssText = `
                 position: fixed;
@@ -775,69 +795,58 @@
             }, 3000);
         }
 
+        // Comunicar con embed cuando hay cambios
+        function sincronizarConEmbed() {
+            // Enviar datos a ventanas hijas (iframes)
+            window.postMessage({
+                type: 'noticias',
+                noticias: noticias,
+                velocidad: velocidadActual
+            }, '*');
+            
+            // También guardar en sessionStorage como backup
+            try {
+                sessionStorage.setItem('feedNoticias', JSON.stringify(noticias));
+                sessionStorage.setItem('feedVelocidad', velocidadActual.toString());
+            } catch (e) {
+                console.log('sessionStorage no disponible');
+            }
+        }
+
         // Inicializar cuando la página carga
         document.addEventListener('DOMContentLoaded', function() {
             console.log('Iniciando aplicación...');
+            
+            // Configurar modo embed ANTES de cargar noticias
+            if (esEmbed) {
+                // Ocultar elementos de administración
+                document.getElementById('admin-panel').style.display = 'none';
+                document.getElementById('admin-btn').style.display = 'none';
+                document.body.style.background = 'transparent';
+                document.body.style.margin = '0';
+                document.body.style.padding = '0';
+                
+                // Ajustar carrusel para embed
+                const container = document.getElementById('carousel-container');
+                container.style.margin = '0';
+                container.style.width = '100%';
+            }
+            
             cargarNoticias();
             actualizarCarrusel();
+            
+            if (!esEmbed) {
+                actualizarListaAdmin();
+            }
             
             document.querySelectorAll('.speed-btn').forEach(btn => {
                 if (parseInt(btn.dataset.speed) === velocidadActual) {
                     btn.classList.add('active');
                 }
             });
-            // Detectar si estamos en modo embed
-const urlParams = new URLSearchParams(window.location.search);
-const esEmbed = urlParams.get('embed') === 'true';
-
-if (esEmbed) {
-    // Ocultar elementos de administración
-    document.getElementById('admin-panel').style.display = 'none';
-    document.getElementById('admin-btn').style.display = 'none';
-    document.body.style.background = 'transparent';
-    document.body.style.margin = '0';
-    document.body.style.padding = '0';
-    
-    // Ajustar carrusel para embed
-    const container = document.getElementById('carousel-container');
-    container.style.margin = '0';
-    container.style.width = '100%';
-}
-// Comunicar con embed cuando hay cambios
-function sincronizarConEmbed() {
-    // Enviar datos a ventanas hijas (iframes)
-    window.postMessage({
-        type: 'noticias',
-        noticias: noticias,
-        velocidad: velocidadActual
-    }, '*');
-    
-    // También guardar en sessionStorage como backup
-    try {
-        sessionStorage.setItem('feedNoticias', JSON.stringify(noticias));
-        sessionStorage.setItem('feedVelocidad', velocidadActual.toString());
-    } catch (e) {
-        console.log('sessionStorage no disponible');
-    }
-}
-
-// Modificar guardarNoticias para sincronizar
-const originalGuardarNoticias = guardarNoticias;
-guardarNoticias = function() {
-    originalGuardarNoticias();
-    sincronizarConEmbed();
-};
-
-// Sincronizar cada vez que se actualiza el carrusel
-const originalActualizarCarrusel = actualizarCarrusel;
-actualizarCarrusel = function() {
-    originalActualizarCarrusel();
-    sincronizarConEmbed();
-};
-
-// Sincronizar al cargar
-sincronizarConEmbed();
             
+            // Sincronizar inicialmente
+            sincronizarConEmbed();
         });
     </script>
 </body>
