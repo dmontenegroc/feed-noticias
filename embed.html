@@ -122,28 +122,44 @@
         let velocidadActual = 200;
 
         function cargarNoticiasReales() {
-            try {
-                // Intentar múltiples métodos para cargar datos
-                let noticiasGuardadas = null;
-                let velocidadGuardada = null;
-
-                // Método 1: localStorage (funciona en navegador normal)
-                try {
-                    noticiasGuardadas = localStorage.getItem('feedNoticias');
-                    velocidadGuardada = localStorage.getItem('feedVelocidad');
-                } catch (e) {
-                    console.log('localStorage bloqueado, intentando sessionStorage');
+    try {
+        // Intentar sessionStorage primero (más compatible con iframes)
+        let noticiasGuardadas = sessionStorage.getItem('feedNoticias');
+        let velocidadGuardada = sessionStorage.getItem('feedVelocidad');
+        
+        // Si no hay en sessionStorage, intentar localStorage
+        if (!noticiasGuardadas) {
+            noticiasGuardadas = localStorage.getItem('feedNoticias');
+            velocidadGuardada = localStorage.getItem('feedVelocidad');
+        }
+        
+        console.log('Noticias encontradas:', noticiasGuardadas);
+        
+        if (noticiasGuardadas && noticiasGuardadas !== 'null' && noticiasGuardadas !== '[]') {
+            const noticiasParseadas = JSON.parse(noticiasGuardadas);
+            
+            if (Array.isArray(noticiasParseadas) && noticiasParseadas.length > 0) {
+                noticias = noticiasParseadas;
+                console.log('Noticias cargadas correctamente:', noticias.length);
+                
+                if (velocidadGuardada) {
+                    velocidadActual = parseInt(velocidadGuardada);
                 }
-
-                // Método 2: sessionStorage (backup)
-                if (!noticiasGuardadas) {
-                    try {
-                        noticiasGuardadas = sessionStorage.getItem('feedNoticias');
-                        velocidadGuardada = sessionStorage.getItem('feedVelocidad');
-                    } catch (e) {
-                        console.log('sessionStorage también bloqueado');
-                    }
-                }
+                
+                return true;
+            }
+        }
+        
+        console.log('No hay noticias válidas');
+        noticias = [];
+        return false;
+        
+    } catch (error) {
+        console.error('Error cargando noticias:', error);
+        noticias = [];
+        return false;
+    }
+}
 
                 console.log('Noticias encontradas:', noticiasGuardadas);
                 
